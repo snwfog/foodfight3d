@@ -44,20 +44,17 @@ namespace FoodFightGame3D
       graphics = new GraphicsDeviceManager(this);
       Content.RootDirectory = "Content";
 
-      this._viewMatrix = Matrix.CreateLookAt(
-        new Vector3(0, 0, 10), 
-        new Vector3(0, 0, 0), 
-        Vector3.UnitY
-      );
+      this._viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, 50), new Vector3(0, 0, 0), Vector3.UnitY);
 
-      this._projectionMatrix = Matrix.CreateOrthographic(9, 16, 5, -5);
+      //this._projectionMatrix = Matrix.CreateOrthographic(1, 1, 5, -5);
 //      this._projectionMatrix = Matrix.CreateOrthographicOffCenter(0, 3, 2, 0, -2, 2);
-//      this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-//        MathHelper.ToRadians(45), 800f / 600f, 0.1f, 100f);
+      this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+        MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
 
-      this._windowBound = new Rectangle(0, 0, 500, 640);
+      this._windowBound = new Rectangle(0, 0, 800, 600);
       this.graphics.PreferredBackBufferWidth = this._windowBound.Width;
       this.graphics.PreferredBackBufferHeight = this._windowBound.Height;
+      //this.graphics.IsFullScreen = true;
 
       this._jimmy = Character.GetNewInstance(this);
 
@@ -122,6 +119,11 @@ namespace FoodFightGame3D
         AllBullets.Add(Bullet.GetNewInstance(GraphicsDevice, this._jimmy));
       }
 
+      foreach (Bullet bullet in AllBullets)
+      {
+          bullet.Update(gameTime);
+      }
+
       // TODO: Add your update logic here
       base.Update(gameTime);
     }
@@ -135,6 +137,11 @@ namespace FoodFightGame3D
       GraphicsDevice.Clear(Color.CornflowerBlue);
 
       this._jimmy.Draw(gameTime);
+      this.cubeTest.Draw(Matrix.Identity, this._viewMatrix, this._projectionMatrix, Color.Yellow);
+      foreach (Bullet bullet in AllBullets)
+      {
+          bullet.Draw(Matrix.Identity, this._viewMatrix, this._projectionMatrix, Color.HotPink);
+      }
 
       base.Draw(gameTime);
     }

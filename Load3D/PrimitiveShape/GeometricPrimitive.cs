@@ -77,7 +77,7 @@ namespace FoodFighGame3D.PrimitiveShape
       }
     }
 
-    public void Draw(Effect effect)
+    private void _Draw(Effect effect)
     {
       GraphicsDevice graphicsDevice = effect.GraphicsDevice;
       graphicsDevice.SetVertexBuffer(vertexBuffer);
@@ -112,7 +112,7 @@ namespace FoodFighGame3D.PrimitiveShape
         device.BlendState = BlendState.Opaque;
       }
 
-      Draw(basicEffect);
+      _Draw(basicEffect);
     }
   }
 }

@@ -9,7 +9,7 @@ namespace FoodFighGame3D
   public class BaseModel
   {
     public static Random RANDOM = new Random();
-
+    
     public Vector3 Position { get; set; }
     public Vector3 Direction { get; set; }
     public Matrix Rotation { get; set; }
