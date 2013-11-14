@@ -1,6 +1,8 @@
 ﻿#region Using Statements
 using System;
 using System.Collections.Generic;
+using FoodFighGame3D;
+using FoodFighGame3D.PrimitiveShape;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,6 +32,12 @@ namespace FoodFightGame3D
 
     private Rectangle _windowBound;
 
+    public List<Bullet> AllBullets;
+
+    private float testTimer = 0;
+    private float shootingLimit = 1000;
+
+    private CubePrimitive cubeTest;
 
     public FoodFightGame3D()
     {
@@ -50,7 +58,11 @@ namespace FoodFightGame3D
       this._windowBound = new Rectangle(0, 0, 500, 640);
       this.graphics.PreferredBackBufferWidth = this._windowBound.Width;
       this.graphics.PreferredBackBufferHeight = this._windowBound.Height;
+
       this._jimmy = Character.GetNewInstance(this);
+
+
+      this.AllBullets = new List<Bullet>();
     }
 
     public Matrix GetViewMatrix() { return this._viewMatrix; }
@@ -78,7 +90,7 @@ namespace FoodFightGame3D
       // Create a new SpriteBatch, which can be used to draw textures.
       spriteBatch = new SpriteBatch(GraphicsDevice);
 
-      otherTexture = Content.Load<Texture2D>("NewTexture");
+      cubeTest = new CubePrimitive(GraphicsDevice);
     }
 
     /// <summary>
@@ -103,6 +115,13 @@ namespace FoodFightGame3D
 
       this._jimmy.Update(gameTime);
 
+      testTimer += gameTime.ElapsedGameTime.Milliseconds;
+      if (testTimer >= shootingLimit)
+      {
+        testTimer = 0;
+        AllBullets.Add(Bullet.GetNewInstance(GraphicsDevice, this._jimmy));
+      }
+
       // TODO: Add your update logic here
       base.Update(gameTime);
     }
@@ -120,22 +139,22 @@ namespace FoodFightGame3D
       base.Draw(gameTime);
     }
 
-//     private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
-//     {
-//       foreach (ModelMesh mesh in model.Meshes)
-//       {
-//         foreach (BasicEffect effect in mesh.Effects)
-//         {
-//           //effect.TextureEnabled = false;
-//           //effect.Texture = otherTexture;
-//           effect.World = world;
-//           effect.View = view;
-//           effect.Projection = projection;
-//         }
-// 
-//         mesh.Draw();
-//       }
-//     }
+     private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
+     {
+       foreach (ModelMesh mesh in model.Meshes)
+       {
+         foreach (BasicEffect effect in mesh.Effects)
+         {
+           //effect.TextureEnabled = false;
+           //effect.Texture = otherTexture;
+           effect.World = world;
+           effect.View = view;
+           effect.Projection = projection;
+         }
+ 
+         mesh.Draw();
+       }
+     }
 
   }
 }

@@ -50,10 +50,17 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BaseModel.cs" />
+    <Compile Include="Bullet.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="FoodFightGame3D.cs" />
+    <Compile Include="IAutoMoveable.cs" />
+    <Compile Include="IAutoShootable.cs" />
+    <Compile Include="PrimitiveShape\CubePrimitive.cs" />
+    <Compile Include="PrimitiveShape\GeometricPrimitive.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PrimitiveShape\VertexPositionNormal.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
