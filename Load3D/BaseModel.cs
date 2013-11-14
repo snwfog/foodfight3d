@@ -41,7 +41,7 @@ namespace FoodFighGame3D
 
     protected void GoForward(float distance)
     {
-      this.Position += this.Rotation.Forward * distance * Speed;
+      this.Position += this.Rotation.Up * distance * Speed;
     }
   }
 }

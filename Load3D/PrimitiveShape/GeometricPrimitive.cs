@@ -77,7 +77,7 @@ namespace FoodFighGame3D.PrimitiveShape
       }
     }
 
-    private void _Draw(Effect effect)
+    protected void _Draw(Effect effect)
     {
       GraphicsDevice graphicsDevice = effect.GraphicsDevice;
       graphicsDevice.SetVertexBuffer(vertexBuffer);

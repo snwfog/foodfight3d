@@ -12,7 +12,7 @@ namespace FoodFighGame3D
   public class Bullet : CubePrimitive, IAutoMoveable
   {
     public static float SPEED = 0.4f;
-    private BaseModel _owner;
+//    private BaseModel _owner;
 
     public Bullet(GraphicsDevice graphicsDevice) : base(graphicsDevice, 0.1f)
     {
@@ -36,6 +36,11 @@ namespace FoodFighGame3D
     public void UpdatePosition(GameTime gameTime)
     {
       this.GoForward(0.05f);
+    }
+
+    public void Draw(Matrix view, Matrix projection, Color color)
+    {
+      base.Draw(Matrix.CreateTranslation(this.Position), view, projection, color);
     }
   }
 }
