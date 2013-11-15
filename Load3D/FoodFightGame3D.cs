@@ -1,22 +1,13 @@
 ﻿#region Using Statements
-using System;
+
 using System.Collections.Generic;
-using FoodFighGame3D;
-using FoodFighGame3D.PrimitiveShape;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Storage;
-using Microsoft.Xna.Framework.GamerServices;
-using ButtonState = Microsoft.Xna.Framework.Input.ButtonState;
-using GamePad = Microsoft.Xna.Framework.Input.GamePad;
-using Keyboard = OpenTK.Input.Keyboard;
-using KeyboardState = OpenTK.Input.KeyboardState;
 
 #endregion
 
-namespace FoodFightGame3D
+namespace FoodFight3D
 {
   /// <summary>
   /// This is the main type for your game
@@ -37,7 +28,7 @@ namespace FoodFightGame3D
     private float testTimer = 0;
     private float shootingLimit = 1000;
 
-    private CubePrimitive cubeTest;
+    private PowerUp powerUpTest;
 
     public FoodFightGame3D()
     {
@@ -46,10 +37,10 @@ namespace FoodFightGame3D
 
       this._viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, 5), new Vector3(0, 0, 0), Vector3.UnitY);
 
-      //this._projectionMatrix = Matrix.CreateOrthographic(1, 1, 5, -5);
+      this._projectionMatrix = Matrix.CreateOrthographic(8, 6, 50, -50);
 //      this._projectionMatrix = Matrix.CreateOrthographicOffCenter(0, 3, 2, 0, -2, 2);
-      this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-        MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
+//      this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+//        MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
 
       this._windowBound = new Rectangle(0, 0, 800, 600);
       this.graphics.PreferredBackBufferWidth = this._windowBound.Width;
@@ -87,7 +78,7 @@ namespace FoodFightGame3D
       // Create a new SpriteBatch, which can be used to draw textures.
       spriteBatch = new SpriteBatch(GraphicsDevice);
 
-      cubeTest = new CubePrimitive(GraphicsDevice);
+      powerUpTest = PowerUp.GetNewInstance(this);
     }
 
     /// <summary>
@@ -116,7 +107,7 @@ namespace FoodFightGame3D
       if (testTimer >= shootingLimit)
       {
         testTimer = 0;
-        AllBullets.Add(Bullet.GetNewInstance(GraphicsDevice, this._jimmy));
+        AllBullets.Add(Bullet.GetNewInstance(this, this._jimmy));
       }
 
       foreach (Bullet bullet in AllBullets)
@@ -133,7 +124,7 @@ namespace FoodFightGame3D
     /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Draw(GameTime gameTime)
     {
-      GraphicsDevice.Clear(Color.CornflowerBlue);
+      GraphicsDevice.Clear(Color.Black);
 
       this._jimmy.Draw(gameTime);
 //      this.cubeTest.Draw(Matrix.Identity, this._viewMatrix, this._projectionMatrix, Color.Yellow);
@@ -141,6 +132,8 @@ namespace FoodFightGame3D
       {
           bullet.Draw(this._viewMatrix, this._projectionMatrix, Color.Pink);
       }
+
+      powerUpTest.Draw(gameTime);
 
       base.Draw(gameTime);
     }

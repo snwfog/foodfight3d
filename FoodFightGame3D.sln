@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodFightGame3D", "Load3D\FoodFightGame3D.csproj", "{B7E2E151-551B-4924-8D43-E1F7982357F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodFight3D", "Load3D\FoodFight3D.csproj", "{B7E2E151-551B-4924-8D43-E1F7982357F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

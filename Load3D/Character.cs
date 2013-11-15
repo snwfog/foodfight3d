@@ -8,16 +8,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace FoodFightGame3D
+namespace FoodFight3D
 {
   public class Character : BaseModel
   {
+    public static FoodFightGame3D GameInstance;
     public static float SPEED = 0.05f;
-
-    private Matrix _world;
-    private Model _model { get; set; }
-    private Matrix _view { get; set; }
-    private Matrix _projection { get; set; }
 
     private Character(Vector3 position, Matrix rotation) : base(position, rotation)
     {
@@ -27,10 +23,9 @@ namespace FoodFightGame3D
     private static Character _Initialize(FoodFightGame3D game)
     {
       Character _instance = new Character(Vector3.Zero, Matrix.Identity);
-      _instance._model = game.Content.Load<Model>("Ship");
-      _instance._view = game.GetViewMatrix();
-      _instance._projection = game.GetProjectionMatrix();
+      Character.GameInstance = game;
 
+      _instance.Model = Plane.GetNewInstance(game);
       return _instance;
     }
 
@@ -85,29 +80,15 @@ namespace FoodFightGame3D
     public void Update(GameTime gameTime)
     {
       this._MovePosition(gameTime); // Move model to new _position
-      this._world = Matrix.CreateTranslation(this.Position);
     }
 
-    public void Draw(GameTime gameTime)
+    public override void Draw(GameTime gameTime)
     {
-      DrawModel(this._model, this._world, this._view, this._projection);
-    }
+      Matrix world = Matrix.CreateTranslation(this.Position);
+      Matrix view = GameInstance.GetViewMatrix();
+      Matrix projection = GameInstance.GetProjectionMatrix();
 
-    private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
-    {
-      foreach (ModelMesh mesh in model.Meshes)
-      {
-        foreach (BasicEffect effect in mesh.Effects)
-        {
-          //effect.TextureEnabled = false;
-          //effect.Texture = otherTexture;
-          effect.World = world;
-          effect.View = view;
-          effect.Projection = projection;
-        }
-
-        mesh.Draw();
-      }
+      Model.Draw(world, view, projection, Color.White);
     }
   }
 }

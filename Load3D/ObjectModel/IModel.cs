@@ -6,8 +6,8 @@ using Microsoft.Xna.Framework;
 
 namespace FoodFight3D
 {
-  interface IAutoMoveable
+  public interface IModel
   {
-    void UpdatePosition(GameTime gameTime);
+    void Draw(Matrix world, Matrix view, Matrix projection, Color color);
   }
 }

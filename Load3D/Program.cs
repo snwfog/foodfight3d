@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 #endregion
 
-namespace FoodFightGame3D
+namespace FoodFight3D
 {
 #if WINDOWS || LINUX
     /// <summary>

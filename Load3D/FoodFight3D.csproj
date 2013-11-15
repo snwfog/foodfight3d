@@ -8,7 +8,7 @@
     <ProjectGuid>{B7E2E151-551B-4924-8D43-E1F7982357F3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FoodFighGame3D</RootNamespace>
+    <RootNamespace>FoodFight3D</RootNamespace>
     <AssemblyName>FoodFightGame3D</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -56,6 +56,11 @@
     <Compile Include="FoodFightGame3D.cs" />
     <Compile Include="IAutoMoveable.cs" />
     <Compile Include="IAutoShootable.cs" />
+    <Compile Include="ObjectModel\BasicObjectModel.cs" />
+    <Compile Include="ObjectModel\Hexagon.cs" />
+    <Compile Include="ObjectModel\IModel.cs" />
+    <Compile Include="ObjectModel\Plane.cs" />
+    <Compile Include="PowerUp.cs" />
     <Compile Include="PrimitiveShape\CubePrimitive.cs" />
     <Compile Include="PrimitiveShape\GeometricPrimitive.cs" />
     <Compile Include="Program.cs" />
@@ -79,12 +84,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\SHIP_TEXTURE_01.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_02.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_03.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_04.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_05.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_06.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_07.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_08.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_09.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_10.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\SHIP_TEXTURE_11.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\NewTexture.xnb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\Ship.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

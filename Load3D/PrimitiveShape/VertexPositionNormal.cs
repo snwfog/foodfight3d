@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FoodFighGame3D
+namespace FoodFight3D
 {
   public struct VertexPositionNormal : IVertexType
   {

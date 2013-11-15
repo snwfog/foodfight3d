@@ -5,9 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FoodFighGame3D.PrimitiveShape
+namespace FoodFight3D
 {
-  public class GeometricPrimitive : BaseModel, IDisposable
+  public class GeometricPrimitive : IModel, IDisposable
   {
     protected List<VertexPositionNormal> vertices = new List<VertexPositionNormal>();
     protected List<ushort> indices = new List<ushort>();
@@ -15,9 +15,6 @@ namespace FoodFighGame3D.PrimitiveShape
     protected VertexBuffer vertexBuffer;
     protected IndexBuffer indexBuffer;
     protected BasicEffect basicEffect;
-
-    public GeometricPrimitive() : this(Vector3.One, Matrix.Identity) {}
-    public GeometricPrimitive(Vector3 position, Matrix rotation) : base(position, rotation) {}
 
     protected void AddVertex(Vector3 position, Vector3 normal)
     {

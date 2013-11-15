@@ -4,16 +4,19 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace FoodFighGame3D
+namespace FoodFight3D
 {
-  public class BaseModel
+  public abstract class BaseModel
   {
     public static Random RANDOM = new Random();
-    
+    public static FoodFightGame3D GameInstance { get; set; }
+
     public Vector3 Position { get; set; }
     public Vector3 Direction { get; set; }
     public Matrix Rotation { get; set; }
     public float Speed { get; set; }
+    public BoundingSphere BoundingSphere { get; set; }
+    protected IModel Model;
 
     public BaseModel() : this(Vector3.One, Matrix.Identity) {}
 
@@ -22,6 +25,7 @@ namespace FoodFighGame3D
       Position = position;
       Rotation = rotation;
       Speed = 1;
+      BoundingSphere = new BoundingSphere(position, 1.0f);
     }
 
     public virtual BoundingSphere GetBoundingSphere()
@@ -43,5 +47,7 @@ namespace FoodFighGame3D
     {
       this.Position += this.Rotation.Up * distance * Speed;
     }
+
+    public abstract void Draw(GameTime gameTime);
   }
 }

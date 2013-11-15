@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FoodFighGame3D.PrimitiveShape
+namespace FoodFight3D
 {
   public class CubePrimitive : GeometricPrimitive
   {
