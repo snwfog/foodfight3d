@@ -53,6 +53,7 @@
     <Compile Include="BaseModel.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="EnemyCraft.cs" />
     <Compile Include="FoodFightGame3D.cs" />
     <Compile Include="IAutoMoveable.cs" />
     <Compile Include="IAutoShootable.cs" />
@@ -148,6 +149,26 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\MODEL_APPLE.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\MODEL_BANANA.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\MODEL_LEMON_2.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\MODEL_ORANGE.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\MODEL_PEAR.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\MODEL_TOMATOE.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

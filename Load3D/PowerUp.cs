@@ -9,11 +9,7 @@ namespace FoodFight3D
   public class PowerUp : BaseModel
   {
     public static FoodFightGame3D GameInstance;
-    public static float ROTATION_SPEED = 0.5f;
-    public static Matrix INCLINATION = Matrix.Multiply(
-      Matrix.CreateRotationZ((float)Math.PI / 2)
-      , Matrix.CreateRotationX((float)Math.PI / 2));
-
+    public static float ROTATION_SPEED = 1.5f;
 
     private PowerUp(Vector3 position) : base(position, Matrix.Identity) {}
 
@@ -26,9 +22,16 @@ namespace FoodFight3D
       return _powerUp;
     }
 
+    public void Update(GameTime gameTime)
+    {
+      this.Rotation *= Matrix.CreateFromYawPitchRoll(MathHelper.ToRadians(ROTATION_SPEED), 0, 0);
+    }
+
     public override void Draw(GameTime gameTime)
     {
-      Matrix world = Matrix.CreateTranslation(this.Position);
+      this.Update(gameTime);
+
+      Matrix world = this.Rotation * Matrix.CreateTranslation(this.Position);
       Matrix view = GameInstance.GetViewMatrix();
       Matrix projection = GameInstance.GetProjectionMatrix();
 
