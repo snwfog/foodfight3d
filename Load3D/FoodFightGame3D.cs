@@ -183,7 +183,7 @@ namespace FoodFight3D
       {
         case Perspective.UP:
           this._viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, 20), new Vector3(0, 0, 0), Vector3.UnitX);
-          this._projectionMatrix = Matrix.CreateOrthographic(16, 12, -50, 50);
+          this._projectionMatrix = Matrix.CreateOrthographic(32, 24, -50, 50);
           break;
         case Perspective.FIRST:
           _cameraPosition = Vector3.Add(this._jimmy.Position, new Vector3(0, 0, 0.3f));
