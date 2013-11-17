@@ -9,5 +9,6 @@ namespace FoodFight3D
   public interface IModel
   {
     void Draw(Matrix world, Matrix view, Matrix projection, Color color);
+    List<BoundingSphere> GetBoundingSpheres();
   }
 }

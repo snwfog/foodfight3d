@@ -26,7 +26,6 @@ namespace FoodFight3D
     private Matrix _viewMatrix;
     private Matrix _projectionMatrix;
     private Character _jimmy;
-    private Texture2D otherTexture;
 
     private Rectangle _windowBound;
 
@@ -39,8 +38,6 @@ namespace FoodFight3D
 
     private float testTimer = 0;
     private float shootingLimit = 1000;
-
-    private PowerUp powerUpTest;
 
     public FoodFightGame3D()
     {
@@ -124,7 +121,11 @@ namespace FoodFight3D
       }
 
       foreach (Bullet bullet in AllBullets) bullet.Update(gameTime);
-      foreach (PowerUp powerup in AllPowerUps) powerup.Update(gameTime);
+      foreach (PowerUp powerup in AllPowerUps)
+      {
+          powerup.Update(gameTime);
+      }
+
       foreach (Pit pit in AllPits) pit.Update(gameTime);
       foreach (EnemyCraft craft in AllEnemyCrafts) craft.Update(gameTime);
 

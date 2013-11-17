@@ -34,9 +34,26 @@ namespace FoodFight3D
       BoundingSphere = new BoundingSphere(position, 1.0f);
     }
 
-    public virtual BoundingSphere GetBoundingSphere()
+    public Matrix GetWorldTransform()
     {
-      return new BoundingSphere(Position, 1);
+        return Matrix.CreateTranslation(this.Position) * this.Rotation;
+    }
+
+
+    public bool Intersect(BaseModel model)
+    {
+        foreach (BoundingSphere _sphere in this.GetBoundingSphere())
+            foreach (BoundingSphere _otherSphere in model.GetBoundingSphere())
+                if (_sphere.Transform(this.GetWorldTransform())
+                    .Intersects(_otherSphere.Transform(model.GetWorldTransform())))
+                    return true;
+
+        return false;
+    }
+
+    public virtual List<BoundingSphere> GetBoundingSphere()
+    {
+        return this.Model.GetBoundingSpheres();
     }
 
     public virtual void Rotate(GameTime gameTime)

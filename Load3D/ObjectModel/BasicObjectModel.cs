@@ -9,7 +9,7 @@ namespace FoodFight3D
 {
   public abstract class BasicObjectModel : IModel
   {
-    public Model Model { get; set; }
+    public Model Model { get; set; } // Only if there is a model
 
     public Matrix World { get; set; }
     public Matrix View { get; set; }
@@ -17,11 +17,15 @@ namespace FoodFight3D
     public Color Color { get; set; }
 
     public Texture2D Texture { get; set; }
+    public List<BoundingSphere> BoundingSphere = new List<BoundingSphere>();
 
     public BasicObjectModel()
     {
       this.Color = Color.White;
+      BoundingSphere = new List<BoundingSphere>();
     }
+
+    public virtual List<BoundingSphere> GetBoundingSpheres() { return BoundingSphere; }
 
     public void Draw(Matrix world)
     {

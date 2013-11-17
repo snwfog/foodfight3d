@@ -17,7 +17,6 @@ namespace FoodFight3D
     public static int MIN_YAW_INTERVAL_TIMER = 200;
     public static int MAX_YAW_INTERVAL_TIMER = 800;
 
-    private Texture2D _texture;
     private float _spawnAnimationTimer;
 
     private float _shootIntervalTimer, _currentShootIntervalTimer = MIN_SHOOT_INTERVAL_TIMER;

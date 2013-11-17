@@ -21,7 +21,6 @@ namespace FoodFight3D
     public Bullet(GraphicsDevice graphicsDevice)
     {
       SpeedMovement = BULLET_SPEED;
-      BoundingSphere = new BoundingSphere(Position, BULLET_SIZE);
     }
 
     public static Bullet GetNewInstance(FoodFightGame3D game, BaseModel owner)

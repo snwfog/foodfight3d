@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace FoodFight3D
 {
@@ -10,6 +11,13 @@ namespace FoodFight3D
     public enum CraftType
     {
       JIMMY, ENEMY_TYPE_1, ENEMY_TYPE_2, ENEMY_TYPE_3, ENEMY_TYPE_4, SPECIAL
+    }
+
+    public List<BoundingSphere> GetBoundingSphere()
+    {
+        foreach (ModelMesh _mesh in this.Model.Meshes)
+            this.BoundingSphere.Add(_mesh.BoundingSphere);
+        return this.BoundingSphere;
     }
 
     public static Plane GetNewInstance(FoodFightGame3D game, CraftType type)

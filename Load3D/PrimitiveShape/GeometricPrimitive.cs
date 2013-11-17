@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace FoodFight3D
 {
-  public class GeometricPrimitive : IModel, IDisposable
+  public class GeometricPrimitive : IDisposable
   {
     protected List<VertexPositionNormal> vertices = new List<VertexPositionNormal>();
     protected List<ushort> indices = new List<ushort>();

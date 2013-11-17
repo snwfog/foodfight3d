@@ -18,6 +18,7 @@ namespace FoodFight3D.ObjectModel
     private BulletModel(GraphicsDevice graphics)
     {
       _shape = new CubePrimitive(graphics, Bullet.BULLET_SIZE);
+      this.BoundingSphere.Add(new BoundingSphere(Vector3.Zero, Bullet.BULLET_SIZE));
     }
 
     public static BulletModel GetNewInstance(FoodFightGame3D game)
