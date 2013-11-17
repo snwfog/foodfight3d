@@ -12,12 +12,17 @@ namespace FoodFight3D
 {
   public class Character : BaseModel
   {
-    public static FoodFightGame3D GameInstance;
-    public static float SPEED = 0.05f;
+    public static float MOVEMENT_SPEED = 0.05f;
+    public static float ROTATION_SPEED = 0.05f;
+    public static int DEFAULT_STRENGTH = 100;
+
+    public Queue<PowerUp> lastPickedUpPowerUps = new Queue<PowerUp>(1);
+    public int Strength = DEFAULT_STRENGTH;
 
     private Character(Vector3 position, Matrix rotation) : base(position, rotation)
     {
-      Speed = SPEED;
+      SpeedMovement = MOVEMENT_SPEED;
+      SpeedRotation = ROTATION_SPEED;
     }
 
     private static Character _Initialize(FoodFightGame3D game)
@@ -25,7 +30,7 @@ namespace FoodFight3D
       Character _instance = new Character(Vector3.Zero, Matrix.Identity);
       Character.GameInstance = game;
 
-      _instance.Model = Plane.GetNewInstance(game);
+      _instance.Model = Plane.GetNewInstance(game, Plane.CraftType.JIMMY);
       return _instance;
     }
 
@@ -34,61 +39,62 @@ namespace FoodFight3D
       return _Initialize(game);
     }
 
-    private void _MovePosition(GameTime gameTime)
+    public void Shoot(GameTime gameTime)
+    {
+      Bullet bullet = Bullet.GetNewInstance(GameInstance, this);
+    }
+
+    public void PickUp(PowerUp powerUp)
+    {
+      lastPickedUpPowerUps.Enqueue(powerUp);
+      if (lastPickedUpPowerUps.Count > 1)
+      {
+        PowerUp up = lastPickedUpPowerUps.Dequeue();
+        up.PickUpBy(this);
+      }
+    }
+
+    public PowerUp ThrowUp()
+    {
+      return lastPickedUpPowerUps.Dequeue();
+    }
+
+    private void _MovePosition()
     {
       KeyboardState ks = Keyboard.GetState();
-      if (ks.IsKeyDown(Keys.W) && ks.IsKeyDown(Keys.D))
+      if (ks.IsKeyDown(Keys.A))
       {
-        this.Direction = new Vector3(0.707f, 0.707f, 0);
-      }
-      else if (ks.IsKeyDown(Keys.D) && ks.IsKeyDown(Keys.S))
-      {
-        this.Direction = new Vector3(0.707f, -0.707f, 0);
-      }
-      else if (ks.IsKeyDown(Keys.S) && ks.IsKeyDown(Keys.A))
-      {
-        this.Direction = new Vector3(-0.707f, -0.707f, 0);
-      }
-      else if (ks.IsKeyDown(Keys.A) && ks.IsKeyDown(Keys.W))
-      {
-        this.Direction = new Vector3(-0.707f, 0.707f, 0);
-      }
-      else if (ks.IsKeyDown(Keys.W))
-      {
-        this.Direction = new Vector3(0.0f, 1.0f, 0);
+        // Yaw Left
+        this.YawCounterClockwise();
       }
       else if (ks.IsKeyDown(Keys.D))
       {
-        this.Direction = new Vector3(1.0f, 0.0f, 0);
+        this.YawClockwise();
+      }
+
+      if (ks.IsKeyDown(Keys.W))
+      {
+        this.GoForward();
       }
       else if (ks.IsKeyDown(Keys.S))
       {
-        this.Direction = new Vector3(0.0f, -1.0f, 0);
-      }
-      else if (ks.IsKeyDown(Keys.A))
-      {
-        this.Direction = new Vector3(-1.0f, 0.0f, 0);
-      }
-      else
-      {
-        this.Direction = Vector3.Zero;
+        this.GoBackward();
       }
 
-      this.Position += Vector3.Multiply(this.Direction, this.Speed);
+      if (ks.IsKeyDown(Keys.Q))
+      {
+        this.GoLeft();
+      }
+      else if (ks.IsKeyDown(Keys.E))
+      {
+        this.GoRight();
+      }
     }
 
     public void Update(GameTime gameTime)
     {
-      this._MovePosition(gameTime); // Move model to new _position
-    }
-
-    public override void Draw(GameTime gameTime)
-    {
-      Matrix world = Matrix.CreateTranslation(this.Position);
-      Matrix view = GameInstance.GetViewMatrix();
-      Matrix projection = GameInstance.GetProjectionMatrix();
-
-      Model.Draw(world, view, projection, Color.White);
+//      this._MovePosition(gameTime); // Move model to new _position
+      this._MovePosition();
     }
   }
 }

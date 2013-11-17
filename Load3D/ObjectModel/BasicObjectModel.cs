@@ -18,6 +18,16 @@ namespace FoodFight3D
 
     public Texture2D Texture { get; set; }
 
+    public BasicObjectModel()
+    {
+      this.Color = Color.White;
+    }
+
+    public void Draw(Matrix world)
+    {
+      this.Draw(world, this.View, this.Projection, this.Color);
+    }
+
     public virtual void Draw(Matrix world, Matrix view, Matrix projection, Color color)
     {
       this.DrawModel(this.Model, world, view, projection, color, this.Texture);
@@ -40,6 +50,14 @@ namespace FoodFight3D
             effect.TextureEnabled = true;
             effect.Texture = texture;
           }
+
+          effect.EnableDefaultLighting();
+//          effect.DirectionalLight0.DiffuseColor = Color.White.ToVector3();
+//          effect.DirectionalLight0.DiffuseColor = Color.Blue.ToVector3();
+//          effect.DirectionalLight0.SpecularColor = Color.Green.ToVector3();
+//          effect.AmbientLightColor = Color.Pink.ToVector3();
+//          effect.EmissiveColor = Color.Orange.ToVector3();
+//          effect.DirectionalLight0.Enabled = false;
 
           effect.DiffuseColor = color.ToVector3();
           effect.World = world;

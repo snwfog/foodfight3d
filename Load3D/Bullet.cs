@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using FoodFight3D.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,35 +11,48 @@ namespace FoodFight3D
 {
   public class Bullet : BaseModel, IAutoMoveable
   {
-    public static float SPEED = 0.4f;
-    public static float SIZE = 0.1f;
+    public static float BULLET_SPEED = 0.15f;
+    public static float BULLET_SIZE = 0.1f;
+    public static float TIME_TO_LIVE = 5000;
+
 //    private BaseModel _owner;
+    private float _timer = 0;
 
     public Bullet(GraphicsDevice graphicsDevice)
     {
-      Speed = SPEED;
-      BoundingSphere = new BoundingSphere(Position, SIZE);
-      Model = new CubePrimitive(graphicsDevice, SIZE);
+      SpeedMovement = BULLET_SPEED;
+      BoundingSphere = new BoundingSphere(Position, BULLET_SIZE);
     }
 
     public static Bullet GetNewInstance(FoodFightGame3D game, BaseModel owner)
     {
       Bullet _instance = new Bullet(game.GraphicsDevice);
       Bullet.GameInstance = game;
-      _instance.Position = Vector3.Add(owner.Position, new Vector3(0, 0.75f, 0));
+      _instance.Position = Vector3.Add(owner.Position, owner.Rotation.Up);
       _instance.Rotation = owner.Rotation;
+      _instance.Model = BulletModel.GetNewInstance(game);
+
+      game.AllBullets.Enqueue(_instance);
+      if (game.AllBullets.Count > FoodFightGame3D.NUMBER_OF_BULLET)
+        game.AllBullets.Dequeue();
 
       return _instance;
     }
 
+    public bool IsDead()
+    {
+      return _timer >= TIME_TO_LIVE;
+    }
+
     public void Update(GameTime gameTime)
     {
+      _timer += gameTime.ElapsedGameTime.Milliseconds;
       this.UpdatePosition(gameTime);
     }
 
     public void UpdatePosition(GameTime gameTime)
     {
-      this.GoForward(0.05f);
+      this.GoForward();
     }
 
     public override void Draw(GameTime gameTime)

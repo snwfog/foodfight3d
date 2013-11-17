@@ -10,8 +10,11 @@ namespace FoodFight3D
 
     private CubePrimitive _shape;
 
-    public static Matrix INCLINATION = Matrix.CreateFromYawPitchRoll(0,
-      MathHelper.ToRadians(45), MathHelper.ToRadians(45));
+    public static Matrix INCLINATION = 
+      Matrix.CreateFromYawPitchRoll(
+        0,
+        MathHelper.ToRadians(45), 
+        MathHelper.ToRadians(45));
 
     private Hexagon(GraphicsDevice graphics)
     {
@@ -27,8 +30,7 @@ namespace FoodFight3D
 
     public override void Draw(Matrix world, Matrix view, Matrix projection, Color color)
     {
-      Matrix newWorld = world * INCLINATION;
-      _shape.Draw(newWorld, view, projection, color);
+      _shape.Draw(world, view, projection, color);
     }
   }
 }

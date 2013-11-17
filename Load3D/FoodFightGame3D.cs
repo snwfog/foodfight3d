@@ -1,6 +1,7 @@
 ﻿#region Using Statements
 
 using System.Collections.Generic;
+using FoodFight3D.ObjectModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,8 +15,14 @@ namespace FoodFight3D
   /// </summary>
   public class FoodFightGame3D : Game
   {
+    public static int NUMBER_OF_BULLET = 100;
+    public static int NUMBER_OF_POWERUP = 10;
+    public static int NUMBER_OF_PIT = 10;
+    public static int NUMBER_OF_ENEMY = 4;
+
     GraphicsDeviceManager graphics;
     SpriteBatch spriteBatch;
+    private Perspective _perspective = Perspective.UP;
     private Matrix _viewMatrix;
     private Matrix _projectionMatrix;
     private Character _jimmy;
@@ -23,7 +30,12 @@ namespace FoodFight3D
 
     private Rectangle _windowBound;
 
-    public List<Bullet> AllBullets;
+    public enum Perspective { UP, FIRST, SPECTATOR }
+
+    public Queue<Bullet> AllBullets = new Queue<Bullet>();
+    public Queue<PowerUp> AllPowerUps = new Queue<PowerUp>();
+    public Queue<Pit> AllPits = new Queue<Pit>();
+    public Queue<EnemyCraft> AllEnemyCrafts = new Queue<EnemyCraft>(); 
 
     private float testTimer = 0;
     private float shootingLimit = 1000;
@@ -35,22 +47,12 @@ namespace FoodFight3D
       graphics = new GraphicsDeviceManager(this);
       Content.RootDirectory = "Content";
 
-      this._viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, 5), new Vector3(0, 0, 0), Vector3.UnitY);
-
-      this._projectionMatrix = Matrix.CreateOrthographic(8, 6, 50, -50);
-//      this._projectionMatrix = Matrix.CreateOrthographicOffCenter(0, 3, 2, 0, -2, 2);
-//      this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-//        MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
-
       this._windowBound = new Rectangle(0, 0, 800, 600);
       this.graphics.PreferredBackBufferWidth = this._windowBound.Width;
       this.graphics.PreferredBackBufferHeight = this._windowBound.Height;
       //this.graphics.IsFullScreen = true;
 
       this._jimmy = Character.GetNewInstance(this);
-
-
-      this.AllBullets = new List<Bullet>();
     }
 
     public Matrix GetViewMatrix() { return this._viewMatrix; }
@@ -78,7 +80,16 @@ namespace FoodFight3D
       // Create a new SpriteBatch, which can be used to draw textures.
       spriteBatch = new SpriteBatch(GraphicsDevice);
 
-      powerUpTest = PowerUp.GetNewInstance(this);
+      PowerUp.GetNewInstance(this, (new Vector3(8, 0, 0)), PowerUp.PowerUpType.PEAR);
+      PowerUp.GetNewInstance(this, (new Vector3(0, 4, 0)), PowerUp.PowerUpType.ORANGE);
+      PowerUp.GetNewInstance(this, (new Vector3(0, 0, 2)), PowerUp.PowerUpType.LEMON);
+      PowerUp.GetNewInstance(this, (new Vector3(-8, 0, 0)), PowerUp.PowerUpType.TOMATOE);
+
+      Pit.GetNewInstance(this, (new Vector3(4, 4, -1)));
+      Pit.GetNewInstance(this, (new Vector3(-4, 4, -1)));
+      Pit.GetNewInstance(this, (new Vector3(-4, -4, -1)));
+      Pit.GetNewInstance(this, (new Vector3(4, -4, -1)));
+      EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.SPECIAL);
     }
 
     /// <summary>
@@ -101,19 +112,21 @@ namespace FoodFight3D
       if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
         this.Exit();
 
+      this._UpdateCamera();
       this._jimmy.Update(gameTime);
+
 
       testTimer += gameTime.ElapsedGameTime.Milliseconds;
       if (testTimer >= shootingLimit)
       {
         testTimer = 0;
-        AllBullets.Add(Bullet.GetNewInstance(this, this._jimmy));
+        _jimmy.Shoot(gameTime);
       }
 
-      foreach (Bullet bullet in AllBullets)
-      {
-          bullet.Update(gameTime);
-      }
+      foreach (Bullet bullet in AllBullets) bullet.Update(gameTime);
+      foreach (PowerUp powerup in AllPowerUps) powerup.Update(gameTime);
+      foreach (Pit pit in AllPits) pit.Update(gameTime);
+      foreach (EnemyCraft craft in AllEnemyCrafts) craft.Update(gameTime);
 
       base.Update(gameTime);
     }
@@ -127,33 +140,64 @@ namespace FoodFight3D
       GraphicsDevice.Clear(Color.Black);
 
       this._jimmy.Draw(gameTime);
-//      this.cubeTest.Draw(Matrix.Identity, this._viewMatrix, this._projectionMatrix, Color.Yellow);
-      foreach (Bullet bullet in AllBullets)
-      {
-          bullet.Draw(this._viewMatrix, this._projectionMatrix, Color.Pink);
-      }
-
-      powerUpTest.Draw(gameTime);
+      foreach (Bullet bullet in AllBullets) bullet.Draw(this._viewMatrix, this._projectionMatrix, Color.Pink);
+      foreach (PowerUp powerup in AllPowerUps) powerup.Draw(gameTime);
+      foreach (Pit pit in AllPits) pit.Draw(gameTime);
+      foreach (EnemyCraft craft in AllEnemyCrafts) craft.Draw(gameTime);
 
       base.Draw(gameTime);
     }
 
-     private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
-     {
-       foreach (ModelMesh mesh in model.Meshes)
-       {
-         foreach (BasicEffect effect in mesh.Effects)
-         {
-           //effect.TextureEnabled = false;
-           //effect.Texture = otherTexture;
-           effect.World = world;
-           effect.View = view;
-           effect.Projection = projection;
-         }
- 
-         mesh.Draw();
-       }
-     }
+    private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
+    {
+      foreach (ModelMesh mesh in model.Meshes)
+      {
+        foreach (BasicEffect effect in mesh.Effects)
+        {
+          //effect.TextureEnabled = false;
+          //effect.Texture = otherTexture;
+          effect.World = world;
+          effect.View = view;
+          effect.Projection = projection;
+        }
 
+        mesh.Draw();
+      }
+    }
+
+    private void _UpdateCamera()
+    {
+      KeyboardState ks = Keyboard.GetState();
+      if (ks.IsKeyDown(Keys.D1))
+        _perspective = Perspective.UP;
+      else if (ks.IsKeyDown(Keys.D2))
+        _perspective = Perspective.FIRST;
+      else if (ks.IsKeyDown(Keys.D3))
+        _perspective = Perspective.SPECTATOR;
+
+
+      Vector3 _cameraPosition, _lookAtPosition;
+      //      this._projectionMatrix = Matrix.CreateOrthographicOffCenter(0, 3, 2, 0, -2, 2);
+      //      this._projectionMatrix = Matrix.CreatePerspective(2, 2, 1, 100);
+      switch (_perspective)
+      {
+        case Perspective.UP:
+          this._viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, 20), new Vector3(0, 0, 0), Vector3.UnitX);
+          this._projectionMatrix = Matrix.CreateOrthographic(16, 12, -50, 50);
+          break;
+        case Perspective.FIRST:
+          _cameraPosition = Vector3.Add(this._jimmy.Position, new Vector3(0, 0, 0.3f));
+          _lookAtPosition = Vector3.Add(this._jimmy.Position, this._jimmy.Rotation.Up);
+          this._viewMatrix = Matrix.CreateLookAt(_cameraPosition, _lookAtPosition, Vector3.UnitZ);
+          this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+            MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
+          break;
+        case Perspective.SPECTATOR:
+          this._viewMatrix = Matrix.CreateLookAt(new Vector3(20, 0, 20), new Vector3(0, 0, 0), -Vector3.UnitX);
+          this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+            MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
+          break;
+      }
+    }
   }
 }

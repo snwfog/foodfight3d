@@ -7,31 +7,42 @@ namespace FoodFight3D
   {
     public static FoodFightGame3D GameInstance;
 
-    private Matrix _world { get; set; }
-    private Matrix _view { get; set; }
-    private Matrix _projection { get; set; }
-
-    public static Plane GetNewInstance(FoodFightGame3D game)
+    public enum CraftType
     {
-      return _Initialize(game);
+      JIMMY, ENEMY_TYPE_1, ENEMY_TYPE_2, ENEMY_TYPE_3, ENEMY_TYPE_4, SPECIAL
     }
 
-    private static Plane _Initialize(FoodFightGame3D game)
+    public static Plane GetNewInstance(FoodFightGame3D game, CraftType type)
     {
       Plane _instance = new Plane();
       _instance.Model = game.Content.Load<Model>("Ship");
-      _instance._world = Matrix.Identity;
-      _instance._view = game.GetViewMatrix();
-      _instance._projection = game.GetProjectionMatrix();
+      _instance.World = Matrix.Identity;
+      _instance.View = game.GetViewMatrix();
+      _instance.Projection = game.GetProjectionMatrix();
 
-      _instance.Texture = game.Content.Load<Texture2D>("SHIP_TEXTURE_09");
+      switch (type)
+      {
+        case CraftType.JIMMY:
+          _instance.Texture = game.Content.Load<Texture2D>("SHIP_TEXTURE_02");
+          break;
+        case CraftType.ENEMY_TYPE_1:
+          _instance.Texture = game.Content.Load<Texture2D>("SHIP_TEXTURE_06");
+          break;
+        case CraftType.ENEMY_TYPE_2:
+          _instance.Texture = game.Content.Load<Texture2D>("SHIP_TEXTURE_07");
+          break;
+        case CraftType.ENEMY_TYPE_3:
+          _instance.Texture = game.Content.Load<Texture2D>("SHIP_TEXTURE_08");
+          break;
+        case CraftType.ENEMY_TYPE_4:
+          _instance.Texture = game.Content.Load<Texture2D>("SHIP_TEXTURE_09");
+          break;
+        case CraftType.SPECIAL:
+          _instance.Texture = game.Content.Load<Texture2D>("SHIP_TEXTURE_11");
+          break;
+      }
 
       return _instance;
-    }
-
-    public override void Draw(Matrix world, Matrix view, Matrix projection, Color color)
-    {
-      base.DrawModel(this.Model, world, view, projection, color, this.Texture);
     }
   }
 }
