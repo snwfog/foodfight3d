@@ -12,7 +12,7 @@ namespace FoodFight3D
   {
 
     public static FoodFightGame3D GameInstance;
-    public static int TIME_TO_LIVE = 600000;
+    public static int TIME_TO_LIVE = 6000;
     public static int BAR_COUNT = 20;
 
     private int _timeToLive;
@@ -36,16 +36,18 @@ namespace FoodFight3D
     {
       _timeToLive -= gameTime.ElapsedGameTime.Milliseconds;
 
-      if (_timeToLive < TIME_TO_LIVE * 0.05)
-        this.Model = CakeModel.GetNewInstance(GameInstance, 0.05f);
-      else if (_timeToLive < TIME_TO_LIVE * 0.25)
-        this.Model = CakeModel.GetNewInstance(GameInstance, 0.25f);
-      else if (_timeToLive < TIME_TO_LIVE * 0.50)
-        this.Model = CakeModel.GetNewInstance(GameInstance, 0.50f);
-      else if (_timeToLive < TIME_TO_LIVE * 0.75)
-        this.Model = CakeModel.GetNewInstance(GameInstance, 0.75f);
-      else if (_timeToLive < TIME_TO_LIVE * 1.00)
-        this.Model = CakeModel.GetNewInstance(GameInstance, 1.00f);
+//      this.Model = CakeModel.GetNewInstance(GameInstance, (_timeToLive / TIME_TO_LIVE));
+
+//      if (_timeToLive < TIME_TO_LIVE * 0.05)
+//        this.Model = CakeModel.GetNewInstance(GameInstance, 0.05f);
+//      else if (_timeToLive < TIME_TO_LIVE * 0.25)
+//        this.Model = CakeModel.GetNewInstance(GameInstance, 0.25f);
+//      else if (_timeToLive < TIME_TO_LIVE * 0.50)
+//        this.Model = CakeModel.GetNewInstance(GameInstance, 0.50f);
+//      else if (_timeToLive < TIME_TO_LIVE * 0.75)
+//        this.Model = CakeModel.GetNewInstance(GameInstance, 0.75f);
+//      else if (_timeToLive < TIME_TO_LIVE * 1.00)
+//        this.Model = CakeModel.GetNewInstance(GameInstance, 1.00f);
 
     }
 

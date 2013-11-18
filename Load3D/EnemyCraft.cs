@@ -37,7 +37,13 @@ namespace FoodFight3D
       this._health = ENEMY_CRAFT_STRENGTH;
     }
 
-    public static EnemyCraft GetNewInstance(FoodFightGame3D game, Vector3 position, Plane.CraftType type)
+    public static EnemyCraft GetNewInstance(FoodFightGame3D game, Plane.CraftType type)
+    {
+      return EnemyCraft.GetNewInstance(game, Vector3.Zero, type);
+    }
+
+    public static EnemyCraft GetNewInstance(FoodFightGame3D game, 
+      Vector3 position, Plane.CraftType type)
     {
       EnemyCraft _craft = new EnemyCraft(position);
       _craft.Model = Plane.GetNewInstance(game, type);
@@ -56,11 +62,20 @@ namespace FoodFight3D
       this._spawnAnimationTimer = SPAWN_ANIMATION_TIMER;
       GameInstance.SoundBank.PlayCue("SOUND_SPAWN_03");
 
-      foreach (Pit pit in GameInstance.AllPits)
+      // Hashing function here
+      for (int i = RANDOM.Next(GameInstance.AllPits.Count),
+        d = 1 + RANDOM.Next(GameInstance.AllPits.Count),
+        j = 0, k = i;
+        j < GameInstance.AllPits.Count;
+        ++j, k = (i + j * d) % GameInstance.AllPits.Count)
+      {
+        Pit pit = GameInstance.AllPits[k];
         if (pit.IsFree())
-          if (RANDOM.Next(GameInstance.AllPits.Count) == 0)
-            pit.TakeOverBy(this);
-
+        {
+          pit.TakeOverBy(this);
+          break;
+        }
+      }
     }
 
     public void Shoot(GameTime gameTime)

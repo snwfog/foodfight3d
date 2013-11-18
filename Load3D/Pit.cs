@@ -28,9 +28,7 @@ namespace FoodFight3D
       _pit.Model = PitModel.GetNewInstance(game);
       _pit.Color = color;
 
-      game.AllPits.Enqueue(_pit);
-      if (game.AllPits.Count > FoodFightGame3D.NUMBER_OF_PIT)
-        game.AllPits.Dequeue();
+      game.AllPits.Add(_pit);
 
       return _pit;
     }

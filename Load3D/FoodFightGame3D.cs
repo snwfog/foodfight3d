@@ -42,10 +42,10 @@ namespace FoodFight3D
     public enum Perspective { UP, FIRST, SPECTATOR }
 
     public List<UI2DElement> AllUIElements = new List<UI2DElement>();
+    public List<Pit> AllPits = new List<Pit>();
 
     public Queue<Bullet> AllBullets = new Queue<Bullet>();
     public Queue<PowerUp> AllPowerUps = new Queue<PowerUp>();
-    public Queue<Pit> AllPits = new Queue<Pit>();
     public Queue<EnemyCraft> AllEnemyCrafts = new Queue<EnemyCraft>();
 
     public FoodFightGame3D()
@@ -104,19 +104,24 @@ namespace FoodFight3D
       PowerUp.GetNewInstance(this, (new Vector3(6, 0, 0)), PowerUp.PowerUpType.ORANGE);
       PowerUp.GetNewInstance(this, (new Vector3(5, 0, 0)), PowerUp.PowerUpType.LEMON);
 
-      Pit.GetNewInstance(this, (new Vector3(4, 4, -1)));
+
+      Pit.GetNewInstance(this, (new Vector3(5, 5, -1)));
       Pit.GetNewInstance(this, (new Vector3(-4, 4, -1)));
       Pit.GetNewInstance(this, (new Vector3(-4, -4, -1)));
       Pit.GetNewInstance(this, (new Vector3(4, -4, -1)));
-      EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.SPECIAL);
-      EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.ENEMY_TYPE_1);
-      EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.ENEMY_TYPE_2);
+
+      EnemyCraft.GetNewInstance(this, Plane.CraftType.SPECIAL);
+      EnemyCraft.GetNewInstance(this, Plane.CraftType.ENEMY_TYPE_1);
+      EnemyCraft.GetNewInstance(this, Plane.CraftType.ENEMY_TYPE_2);
 
       UI2DElement.GetNewInstance(this, 
-        new Vector2(this._windowBound.Right - 50, this._windowBound.Bottom -25), this._jimmy);
+        new Vector2(this._windowBound.Right - 50, this._windowBound.Bottom -25), 
+        this._jimmy);
+
       UI2DElement.GetNewInstance(this, 
         new Vector2(this._windowBound.Left + 500, this._windowBound.Bottom - 25),
         this._jimmy.GetAmmoSlot());
+
       UI2DElement.GetNewInstance(this,
         new Vector2(this._windowBound.Left + 5, this._windowBound.Bottom - 25), this._cake);
     }
