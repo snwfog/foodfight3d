@@ -220,9 +220,13 @@ namespace FoodFight3D
       switch (_perspective)
       {
         case Perspective.UP:
-          this._viewMatrix = Matrix.CreateLookAt(new Vector3(0, 0, 20), new Vector3(0, 0, 0), Vector3.UnitX);
+          this._viewMatrix = Matrix.CreateLookAt(
+            new Vector3(0, 0, 20), 
+            new Vector3(0, 0, 0), 
+            Vector3.UnitX);
           this._projectionMatrix = Matrix.CreateOrthographic(32, 24, -50, 50);
           break;
+
         case Perspective.FIRST:
           _cameraPosition = Vector3.Add(this._jimmy.Position, new Vector3(0, 0, 0.3f));
           _lookAtPosition = Vector3.Add(this._jimmy.Position, this._jimmy.Rotation.Up);
@@ -230,8 +234,13 @@ namespace FoodFight3D
           this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
             MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
           break;
+
         case Perspective.SPECTATOR:
-          this._viewMatrix = Matrix.CreateLookAt(new Vector3(20, 0, 20), new Vector3(0, 0, 0), -Vector3.UnitX);
+          this._viewMatrix = Matrix.CreateLookAt(
+            new Vector3(-20, 0, 20), 
+            new Vector3(0, 0, 0), 
+            Vector3.UnitX);
+
           this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
             MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
           break;
