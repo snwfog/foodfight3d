@@ -23,6 +23,7 @@ namespace FoodFight3D
     private float _spawnAnimationTimer;
     private float _hitAnimationTimer;
     private float _flashTimer;
+    private bool _flashToggle;
 
     private float _shootIntervalTimer, _currentShootIntervalTimer = MIN_SHOOT_INTERVAL_TIMER;
     private float _yawIntervalTimer, _currentYawIntervalTimer = MIN_YAW_INTERVAL_TIMER;
@@ -52,6 +53,8 @@ namespace FoodFight3D
     public void Spawn()
     {
       this._health = ENEMY_CRAFT_STRENGTH;
+      this._spawnAnimationTimer = SPAWN_ANIMATION_TIMER;
+      GameInstance.SoundBank.PlayCue("SOUND_SPAWN_03");
 
       foreach (Pit pit in GameInstance.AllPits)
         if (pit.IsFree())
@@ -105,12 +108,28 @@ namespace FoodFight3D
       _shootIntervalTimer += gameTime.ElapsedGameTime.Milliseconds;
       _yawIntervalTimer += gameTime.ElapsedGameTime.Milliseconds;
       _hitAnimationTimer -= gameTime.ElapsedGameTime.Milliseconds;
+      _spawnAnimationTimer -= gameTime.ElapsedGameTime.Milliseconds;
+
+      if (_spawnAnimationTimer > 0)
+      {
+        _flashTimer += gameTime.ElapsedGameTime.Milliseconds;
+        if (_flashTimer > FLASH_INTERVAL)
+        {
+          if (_flashToggle) _flashToggle = false; else _flashToggle = true;
+          _flashTimer = 0;
+        }
+        return;
+      }
+
+      if (_hitAnimationTimer < 0) _hitAnimationTimer = 0;
+      if (_spawnAnimationTimer < 0) _spawnAnimationTimer = 0;
 
       if (_shootIntervalTimer > _currentShootIntervalTimer)
       {
         this.Shoot(gameTime);
         _shootIntervalTimer = 0;
-        _currentShootIntervalTimer = RANDOM.Next(MIN_SHOOT_INTERVAL_TIMER, MAX_SHOOT_INTERVAL_TIMER);
+        _currentShootIntervalTimer = RANDOM.Next(
+          MIN_SHOOT_INTERVAL_TIMER, MAX_SHOOT_INTERVAL_TIMER);
       }
 
       if (_yawIntervalTimer > _currentYawIntervalTimer)
@@ -131,16 +150,23 @@ namespace FoodFight3D
         }
 
         _yawIntervalTimer = 0;
-        _currentYawIntervalTimer = RANDOM.Next(MIN_YAW_INTERVAL_TIMER, MAX_YAW_INTERVAL_TIMER);
-        if (_hitAnimationTimer < 0) _hitAnimationTimer = 0;
+        _currentYawIntervalTimer = RANDOM.Next(
+          MIN_YAW_INTERVAL_TIMER, MAX_YAW_INTERVAL_TIMER);
       }
 
       this.UpdatePosition(gameTime);
     }
 
+    public bool IsSpawning()
+    {
+      return _spawnAnimationTimer > 0;
+    }
+
     public void Draw(GameTime gameTime)
     {
-      if (_hitAnimationTimer > 0)
+      if (_spawnAnimationTimer > 0 && _flashToggle)
+        base.Draw(gameTime, this.GetWorldTransform(), Color.Green);
+      else if (_hitAnimationTimer > 0)
         base.Draw(gameTime, this.GetWorldTransform(), Color.Red);
       else
         base.Draw(gameTime);

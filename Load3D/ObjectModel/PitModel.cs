@@ -19,7 +19,7 @@ namespace FoodFight3D.ObjectModel
 
     private PitModel(GraphicsDevice graphics)
     {
-      _shape = new CylinderPrimitive(graphics, 0.2f, 2, 32);
+      _shape = new CylinderPrimitive(graphics, 0.2f, 1, 32);
     }
 
     public static PitModel GetNewInstance(FoodFightGame3D game)

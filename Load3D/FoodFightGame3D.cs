@@ -35,6 +35,7 @@ namespace FoodFight3D
     private Matrix _viewMatrix;
     private Matrix _projectionMatrix;
     private Character _jimmy;
+    private Cake _cake;
 
     private Rectangle _windowBound;
 
@@ -61,6 +62,7 @@ namespace FoodFight3D
       //this.graphics.IsFullScreen = true;
 
       this._jimmy = Character.GetNewInstance(this);
+      this._cake = Cake.GetNewInstance(this, new Vector3(0, 12, 0));
     }
 
     public Matrix GetViewMatrix() { return this._viewMatrix; }
@@ -101,9 +103,9 @@ namespace FoodFight3D
 //      SoundBank.PlayCue("SOUND_MAIN_LOOP");
 
       PowerUp.GetNewInstance(this, (new Vector3(8, 0, 0)), PowerUp.PowerUpType.PEAR);
-      PowerUp.GetNewInstance(this, (new Vector3(4, 4, 0)), PowerUp.PowerUpType.APPLE);
-      PowerUp.GetNewInstance(this, (new Vector3(0, 4, 0)), PowerUp.PowerUpType.ORANGE);
-      PowerUp.GetNewInstance(this, (new Vector3(0, 0, 2)), PowerUp.PowerUpType.LEMON);
+      PowerUp.GetNewInstance(this, (new Vector3(7, 0, 0)), PowerUp.PowerUpType.APPLE);
+      PowerUp.GetNewInstance(this, (new Vector3(6, 0, 0)), PowerUp.PowerUpType.ORANGE);
+      PowerUp.GetNewInstance(this, (new Vector3(5, 0, 0)), PowerUp.PowerUpType.LEMON);
 
       Pit.GetNewInstance(this, (new Vector3(4, 4, -1)));
       Pit.GetNewInstance(this, (new Vector3(-4, 4, -1)));
@@ -111,8 +113,13 @@ namespace FoodFight3D
       Pit.GetNewInstance(this, (new Vector3(4, -4, -1)));
       EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.SPECIAL);
 
-      UI2DElement.GetNewInstance(this, new Vector2(300, 300), this._jimmy);
-      UI2DElement.GetNewInstance(this, new Vector2(400, 300), this._jimmy.GetAmmoSlot());
+      UI2DElement.GetNewInstance(this, 
+        new Vector2(this._windowBound.Left + 600, this._windowBound.Bottom -25), this._jimmy);
+      UI2DElement.GetNewInstance(this, 
+        new Vector2(this._windowBound.Left + 300, this._windowBound.Bottom - 25),
+        this._jimmy.GetAmmoSlot());
+      UI2DElement.GetNewInstance(this,
+        new Vector2(this._windowBound.Left + 5, this._windowBound.Bottom - 25), this._cake);
     }
 
     /// <summary>
@@ -137,6 +144,7 @@ namespace FoodFight3D
 
       this._UpdateCamera();
       this._jimmy.Update(gameTime);
+      this._cake.Update(gameTime);
 
       testTimer += gameTime.ElapsedGameTime.Milliseconds;
 
@@ -151,7 +159,7 @@ namespace FoodFight3D
           this._jimmy.HitBy(bullet);
         else if (bullet.GetOwner() is Character)
           foreach (EnemyCraft _craft in AllEnemyCrafts)
-            if (bullet.Intersect(_craft))
+            if (!_craft.IsSpawning() && bullet.Intersect(_craft))
               _craft.HitBy(bullet);
       }
 
@@ -177,6 +185,7 @@ namespace FoodFight3D
       GraphicsDevice.Clear(Color.Black);
 
       this._jimmy.Draw(gameTime);
+      this._cake.Draw(gameTime);
       foreach (UI2DElement element in AllUIElements) element.Draw(SpriteBatch);
       foreach (Bullet bullet in AllBullets) bullet.Draw(gameTime);
       foreach (PowerUp powerup in AllPowerUps) powerup.Draw(gameTime);
@@ -184,23 +193,6 @@ namespace FoodFight3D
       foreach (EnemyCraft craft in AllEnemyCrafts) craft.Draw(gameTime);
 
       base.Draw(gameTime);
-    }
-
-    private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
-    {
-      foreach (ModelMesh mesh in model.Meshes)
-      {
-        foreach (BasicEffect effect in mesh.Effects)
-        {
-          //effect.TextureEnabled = false;
-          //effect.Texture = otherTexture;
-          effect.World = world;
-          effect.View = view;
-          effect.Projection = projection;
-        }
-
-        mesh.Draw();
-      }
     }
 
     private void _UpdateCamera()

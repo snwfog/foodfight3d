@@ -16,11 +16,13 @@ namespace FoodFight3D
     public static float ROTATION_SPEED = 0.05f;
     public static int DEFAULT_STRENGTH = 100;
     public static int MIN_SHOOT_INTERVAL = 200;
+    public static int HIT_ANIMATION_DURATION = 200;
 
     public int Strength = DEFAULT_STRENGTH;
 
     private AmmoSlot _ammoSlot;
     private float _shootTimer;
+    private float _hitAnimationTimer;
 
     private Character(Vector3 position, Matrix rotation) : base(position, rotation)
     {
@@ -36,6 +38,7 @@ namespace FoodFight3D
       Character.GameInstance = game;
 
       _instance.Model = Plane.GetNewInstance(game, Plane.CraftType.JIMMY);
+      _instance.Color = Color.White;
       return _instance;
     }
 
@@ -112,6 +115,9 @@ namespace FoodFight3D
 
     public void Update(GameTime gameTime)
     {
+      _hitAnimationTimer -= gameTime.ElapsedGameTime.Milliseconds;
+      if (_hitAnimationTimer < 0) _hitAnimationTimer = 0;
+
       this._MovePosition();
       this._ShootProjectile(gameTime);
     }
@@ -120,6 +126,7 @@ namespace FoodFight3D
     {
       bullet.Expended();
       this.Strength -= bullet.GetDamage() * FoodFightGame3D.DMG_MULTIPLIER;
+      this._hitAnimationTimer = HIT_ANIMATION_DURATION;
       GameInstance.SoundBank.PlayCue("SOUND_HIT_01");
     }
 
@@ -141,5 +148,12 @@ namespace FoodFight3D
       return this.Strength.ToString();
     }
 
+    public void Draw(GameTime gameTime)
+    {
+      if (_hitAnimationTimer > 0)
+        base.Draw(gameTime, this.GetWorldTransform(), Color.Pink);
+      else
+        base.Draw(gameTime);
+    }
   }
 }

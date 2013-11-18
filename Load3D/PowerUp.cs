@@ -79,7 +79,10 @@ namespace FoodFight3D
       this.Update(gameTime);
       if (this.IsConsumed()) return; 
 
-      Matrix newWorld = this.Rotation * Hexagon.INCLINATION * Matrix.CreateTranslation(this.Position);
+      Matrix newWorld = this.Rotation 
+        * Hexagon.INCLINATION 
+        * Matrix.CreateTranslation(this.Position);
+
       base.Draw(gameTime, newWorld);
     }
 

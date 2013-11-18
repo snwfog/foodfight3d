@@ -53,6 +53,7 @@
     <Compile Include="AmmoSlot.cs" />
     <Compile Include="BaseModel.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="Cake.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="EnemyCraft.cs" />
     <Compile Include="FoodFightGame3D.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="IWatchableElement.cs" />
     <Compile Include="ObjectModel\BasicObjectModel.cs" />
     <Compile Include="ObjectModel\BulletModel.cs" />
+    <Compile Include="ObjectModel\CakeModel.cs" />
     <Compile Include="ObjectModel\Hexagon.cs" />
     <Compile Include="ObjectModel\IModel.cs" />
     <Compile Include="ObjectModel\PowerUpModel.cs" />
