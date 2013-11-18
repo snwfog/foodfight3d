@@ -62,7 +62,7 @@ namespace FoodFight3D
       //this.graphics.IsFullScreen = true;
 
       this._jimmy = Character.GetNewInstance(this);
-      this._cake = Cake.GetNewInstance(this, new Vector3(0, 12, 0));
+      this._cake = Cake.GetNewInstance(this, new Vector3(0, 14, 0));
     }
 
     public Matrix GetViewMatrix() { return this._viewMatrix; }
