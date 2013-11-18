@@ -19,7 +19,7 @@ namespace FoodFight3D
   {
     public static int DMG_MULTIPLIER = 1;
     public static int NUMBER_OF_BULLET = 100;
-    public static int NUMBER_OF_POWERUP = 10;
+    public static int NUMBER_OF_POWERUP = 40;
     public static int NUMBER_OF_PIT = 10;
     public static int NUMBER_OF_ENEMY = 4;
 
@@ -99,16 +99,20 @@ namespace FoodFight3D
     {
 //      SoundBank.PlayCue("SOUND_MAIN_LOOP");
 
-      PowerUp.GetNewInstance(this, (new Vector3(8, 0, 0)), PowerUp.PowerUpType.PEAR);
-      PowerUp.GetNewInstance(this, (new Vector3(7, 0, 0)), PowerUp.PowerUpType.APPLE);
-      PowerUp.GetNewInstance(this, (new Vector3(6, 0, 0)), PowerUp.PowerUpType.ORANGE);
-      PowerUp.GetNewInstance(this, (new Vector3(5, 0, 0)), PowerUp.PowerUpType.LEMON);
 
+      for (int i = 0; i < NUMBER_OF_POWERUP; i++)
+      {
+        Vector2 _position2D = GameHelper.GetPosition();
+        Vector3 _position = new Vector3(_position2D.X, _position2D.Y, 0);
+        PowerUp.GetNewInstance(this, _position);
+      }
 
-      Pit.GetNewInstance(this, (new Vector3(5, 5, -1)));
-      Pit.GetNewInstance(this, (new Vector3(-4, 4, -1)));
-      Pit.GetNewInstance(this, (new Vector3(-4, -4, -1)));
-      Pit.GetNewInstance(this, (new Vector3(4, -4, -1)));
+      for (int i = 0; i < NUMBER_OF_PIT; i++)
+      {
+        Vector2 _position2D = GameHelper.GetPosition();
+        Vector3 _position = new Vector3(_position2D.X, _position2D.Y, -1);
+        Pit.GetNewInstance(this, _position);
+      }
 
       EnemyCraft.GetNewInstance(this, Plane.CraftType.SPECIAL);
       EnemyCraft.GetNewInstance(this, Plane.CraftType.ENEMY_TYPE_1);

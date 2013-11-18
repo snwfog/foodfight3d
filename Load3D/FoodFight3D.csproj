@@ -57,6 +57,7 @@
     <Compile Include="Character.cs" />
     <Compile Include="EnemyCraft.cs" />
     <Compile Include="FoodFightGame3D.cs" />
+    <Compile Include="GameHelper.cs" />
     <Compile Include="IAutoMoveable.cs" />
     <Compile Include="IAutoShootable.cs" />
     <Compile Include="IWatchableElement.cs" />

@@ -20,14 +20,38 @@ namespace FoodFight3D
     private int _value;
     private Cue _pickUpCue;
 
-    private PowerUp(Vector3 position, PowerUpType type) : base(position, Matrix.Identity)
+    private PowerUp(Vector3 position, PowerUpType type)
+      : base(position, Matrix.Identity)
     {
       this._type = type;
     }
 
     public int GetValue() { return this._value; }
 
-    public static PowerUp GetNewInstance(FoodFightGame3D game, 
+    public static PowerUp GetNewInstance(FoodFightGame3D game, Vector3 position)
+    {
+      PowerUpType _type = PowerUpType.PEAR;
+
+      switch (RANDOM.Next(4))
+      {
+        case 0:
+          _type = PowerUpType.PEAR;
+          break;
+        case 1:
+          _type = PowerUpType.APPLE;
+          break;
+        case 2:
+          _type = PowerUpType.LEMON;
+          break;
+        case 3:
+          _type = PowerUpType.ORANGE;
+          break;
+      }
+
+      return PowerUp.GetNewInstance(game, position, _type);
+    }
+
+    public static PowerUp GetNewInstance(FoodFightGame3D game,
       Vector3 position, PowerUpType type)
     {
       PowerUp _powerUp = new PowerUp(position, type);
@@ -77,10 +101,10 @@ namespace FoodFight3D
     public override void Draw(GameTime gameTime)
     {
       this.Update(gameTime);
-      if (this.IsConsumed()) return; 
+      if (this.IsConsumed()) return;
 
-      Matrix newWorld = this.Rotation 
-        * Hexagon.INCLINATION 
+      Matrix newWorld = this.Rotation
+        * Hexagon.INCLINATION
         * Matrix.CreateTranslation(this.Position);
 
       base.Draw(gameTime, newWorld);
