@@ -17,11 +17,15 @@ namespace FoodFight3D
     public Vector3 Position { get; set; }
     public Vector3 Direction { get; set; }
     public Matrix Rotation { get; set; }
+
     public BoundingSphere BoundingSphere { get; set; }
+    public CubePrimitive BoundingBox { get; set; }
+
     protected IModel Model;
     public Color Color = Color.White;
 
-    public BaseModel() : this(Vector3.One, Matrix.Identity)
+    public BaseModel()
+      : this(Vector3.One, Matrix.Identity)
     {
     }
 
@@ -31,29 +35,32 @@ namespace FoodFight3D
       Rotation = rotation;
       SpeedMovement = 1;
       SpeedRotation = 1;
-      BoundingSphere = new BoundingSphere(position, 1.0f);
+      BoundingSphere = new BoundingSphere(Vector3.Zero, 1.0f);
     }
 
     public Matrix GetWorldTransform()
     {
-        return Matrix.CreateTranslation(this.Position) * this.Rotation;
+      return this.Rotation * Matrix.CreateTranslation(this.Position);
     }
 
 
     public bool Intersect(BaseModel model)
     {
-        foreach (BoundingSphere _sphere in this.GetBoundingSphere())
-            foreach (BoundingSphere _otherSphere in model.GetBoundingSphere())
-                if (_sphere.Transform(this.GetWorldTransform())
-                    .Intersects(_otherSphere.Transform(model.GetWorldTransform())))
-                    return true;
+      return this.BoundingSphere.Transform(this.GetWorldTransform()).Intersects(
+        model.BoundingSphere.Transform(model.GetWorldTransform()));
+      return this.BoundingSphere.Intersects(model.BoundingSphere);
+//      foreach (BoundingSphere _sphere in this.GetBoundingSphere())
+//        foreach (BoundingSphere _otherSphere in model.GetBoundingSphere())
+//          if (_sphere.Transform(this.GetWorldTransform())
+//              .Intersects(_otherSphere.Transform(model.GetWorldTransform())))
+//            return true;
 
-        return false;
+//      return false;
     }
 
     public virtual List<BoundingSphere> GetBoundingSphere()
     {
-        return this.Model.GetBoundingSpheres();
+      return this.Model.GetBoundingSpheres();
     }
 
     public virtual void Rotate(GameTime gameTime)
@@ -115,17 +122,17 @@ namespace FoodFight3D
 
     protected void Yaw(float angle)
     {
-      this.Rotation *= Matrix.CreateFromAxisAngle(this.Rotation.Forward, angle*SpeedRotation);
+      this.Rotation *= Matrix.CreateFromAxisAngle(this.Rotation.Forward, angle * SpeedRotation);
     }
 
     protected void Pitch(float angle)
     {
-      this.Rotation *= Matrix.CreateFromAxisAngle(this.Rotation.Right, angle*SpeedRotation);
+      this.Rotation *= Matrix.CreateFromAxisAngle(this.Rotation.Right, angle * SpeedRotation);
     }
 
     protected void Roll(float angle)
     {
-      this.Rotation *= Matrix.CreateFromAxisAngle(this.Rotation.Up, angle*SpeedRotation);
+      this.Rotation *= Matrix.CreateFromAxisAngle(this.Rotation.Up, angle * SpeedRotation);
     }
 
     protected void GoFrontBack(float distance)
@@ -140,20 +147,21 @@ namespace FoodFight3D
 
     public virtual void Draw(GameTime gameTime)
     {
-      Matrix world = this.Rotation * Matrix.CreateTranslation(this.Position);
-      this.Draw(gameTime, world);
+      this.Draw(gameTime, this.GetWorldTransform());
     }
 
     public virtual void Draw(GameTime gameTime, Matrix world)
     {
+      this.Draw(gameTime, world, this.Color);
+    }
+
+    public virtual void Draw(GameTime gameTime, Matrix world, Color color)
+    {
       Matrix view = GameInstance.GetViewMatrix();
       Matrix projection = GameInstance.GetProjectionMatrix();
 
-      if (this.Color == null)
-        Model.Draw(world, view, projection, ((BasicObjectModel)Model).Color);
-      else
-        Model.Draw(world, view, projection, Color);
-      
+      Model.Draw(world, view, projection, color);
+
     }
   }
 }

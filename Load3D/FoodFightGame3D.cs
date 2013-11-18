@@ -3,6 +3,8 @@
 using System.Collections.Generic;
 using FoodFight3D.ObjectModel;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -15,13 +17,20 @@ namespace FoodFight3D
   /// </summary>
   public class FoodFightGame3D : Game
   {
+    public static int DMG_MULTIPLIER = 1000;
     public static int NUMBER_OF_BULLET = 100;
     public static int NUMBER_OF_POWERUP = 10;
     public static int NUMBER_OF_PIT = 10;
     public static int NUMBER_OF_ENEMY = 4;
 
     GraphicsDeviceManager graphics;
-    SpriteBatch spriteBatch;
+    SpriteBatch SpriteBatch;
+
+    public AudioEngine AudioEngine { get; set; }
+    public SoundBank SoundBank { get; set; }
+    public WaveBank WaveBank { get; set; }
+    public SpriteFont Mono12 { get; set; }
+
     private Perspective _perspective = Perspective.UP;
     private Matrix _viewMatrix;
     private Matrix _projectionMatrix;
@@ -31,10 +40,12 @@ namespace FoodFight3D
 
     public enum Perspective { UP, FIRST, SPECTATOR }
 
+    public List<UI2DElement> AllUIElements = new List<UI2DElement>();
+
     public Queue<Bullet> AllBullets = new Queue<Bullet>();
     public Queue<PowerUp> AllPowerUps = new Queue<PowerUp>();
     public Queue<Pit> AllPits = new Queue<Pit>();
-    public Queue<EnemyCraft> AllEnemyCrafts = new Queue<EnemyCraft>(); 
+    public Queue<EnemyCraft> AllEnemyCrafts = new Queue<EnemyCraft>();
 
     private float testTimer = 0;
     private float shootingLimit = 1000;
@@ -75,18 +86,33 @@ namespace FoodFight3D
     protected override void LoadContent()
     {
       // Create a new SpriteBatch, which can be used to draw textures.
-      spriteBatch = new SpriteBatch(GraphicsDevice);
+      SpriteBatch = new SpriteBatch(GraphicsDevice);
+      AudioEngine = new AudioEngine("Content\\foodfight3d_xact.xgs");
+      SoundBank = new SoundBank(AudioEngine, "Content\\foodfight3dsb.xsb");
+      WaveBank = new WaveBank(AudioEngine, "Content\\foodfight3dwb.xwb");
+      Mono12 = Content.Load<SpriteFont>("manaspace12");
+
+      _Init();
+
+    }
+
+    private void _Init()
+    {
+//      SoundBank.PlayCue("SOUND_MAIN_LOOP");
 
       PowerUp.GetNewInstance(this, (new Vector3(8, 0, 0)), PowerUp.PowerUpType.PEAR);
+      PowerUp.GetNewInstance(this, (new Vector3(4, 4, 0)), PowerUp.PowerUpType.APPLE);
       PowerUp.GetNewInstance(this, (new Vector3(0, 4, 0)), PowerUp.PowerUpType.ORANGE);
       PowerUp.GetNewInstance(this, (new Vector3(0, 0, 2)), PowerUp.PowerUpType.LEMON);
-      PowerUp.GetNewInstance(this, (new Vector3(-8, 0, 0)), PowerUp.PowerUpType.TOMATOE);
 
       Pit.GetNewInstance(this, (new Vector3(4, 4, -1)));
       Pit.GetNewInstance(this, (new Vector3(-4, 4, -1)));
       Pit.GetNewInstance(this, (new Vector3(-4, -4, -1)));
       Pit.GetNewInstance(this, (new Vector3(4, -4, -1)));
       EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.SPECIAL);
+
+      UI2DElement.GetNewInstance(this, new Vector2(300, 300), this._jimmy);
+      UI2DElement.GetNewInstance(this, new Vector2(400, 300), this._jimmy.GetAmmoSlot());
     }
 
     /// <summary>
@@ -112,18 +138,28 @@ namespace FoodFight3D
       this._UpdateCamera();
       this._jimmy.Update(gameTime);
 
-
       testTimer += gameTime.ElapsedGameTime.Milliseconds;
-      if (testTimer >= shootingLimit)
+
+      foreach (UI2DElement element in AllUIElements) element.Update(gameTime);
+
+      foreach (Bullet bullet in AllBullets)
       {
-        testTimer = 0;
-        _jimmy.Shoot(gameTime);
+        if (bullet.IsExpended()) continue;
+
+        bullet.Update(gameTime);
+        if (bullet.GetOwner() is EnemyCraft && bullet.Intersect(this._jimmy))
+          this._jimmy.HitBy(bullet);
+        else if (bullet.GetOwner() is Character)
+          foreach (EnemyCraft _craft in AllEnemyCrafts)
+            if (bullet.Intersect(_craft))
+              _craft.HitBy(bullet);
       }
 
-      foreach (Bullet bullet in AllBullets) bullet.Update(gameTime);
       foreach (PowerUp powerup in AllPowerUps)
       {
-          powerup.Update(gameTime);
+        powerup.Update(gameTime);
+        if (powerup.Intersect(this._jimmy))
+          this._jimmy.PickUp(powerup);
       }
 
       foreach (Pit pit in AllPits) pit.Update(gameTime);
@@ -141,7 +177,8 @@ namespace FoodFight3D
       GraphicsDevice.Clear(Color.Black);
 
       this._jimmy.Draw(gameTime);
-      foreach (Bullet bullet in AllBullets) bullet.Draw(this._viewMatrix, this._projectionMatrix, Color.Pink);
+      foreach (UI2DElement element in AllUIElements) element.Draw(SpriteBatch);
+      foreach (Bullet bullet in AllBullets) bullet.Draw(gameTime);
       foreach (PowerUp powerup in AllPowerUps) powerup.Draw(gameTime);
       foreach (Pit pit in AllPits) pit.Draw(gameTime);
       foreach (EnemyCraft craft in AllEnemyCrafts) craft.Draw(gameTime);

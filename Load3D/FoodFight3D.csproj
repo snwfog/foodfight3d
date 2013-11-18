@@ -50,6 +50,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AmmoSlot.cs" />
     <Compile Include="BaseModel.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Character.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="FoodFightGame3D.cs" />
     <Compile Include="IAutoMoveable.cs" />
     <Compile Include="IAutoShootable.cs" />
+    <Compile Include="IWatchableElement.cs" />
     <Compile Include="ObjectModel\BasicObjectModel.cs" />
     <Compile Include="ObjectModel\BulletModel.cs" />
     <Compile Include="ObjectModel\Hexagon.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PrimitiveShape\VertexPositionNormal.cs" />
+    <Compile Include="UI2DElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -156,6 +159,24 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\foodfight3dsb.xsb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\foodfight3dwb.xwb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\foodfight3d_xact.xgs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\manaspace0.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\manaspace1.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\manaspace12.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\MODEL_APPLE.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -41,11 +41,6 @@ namespace FoodFight3D
           _scaleFactor = 0.25f;
           _color = Color.Orange;
           break;
-        case PowerUp.PowerUpType.TOMATOE:
-          _modelName = "MODEL_TOMATOE";
-          _scaleFactor = 0.012f;
-          _color = Color.Red;
-          break;
       }
 
 

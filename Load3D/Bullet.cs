@@ -16,20 +16,25 @@ namespace FoodFight3D
     public static float TIME_TO_LIVE = 5000;
 
 //    private BaseModel _owner;
-    private float _timer = 0;
+    private float _timer;
+    private int _dmg;
+    private BaseModel _owner;
 
     public Bullet(GraphicsDevice graphicsDevice)
     {
       SpeedMovement = BULLET_SPEED;
     }
 
-    public static Bullet GetNewInstance(FoodFightGame3D game, BaseModel owner)
+    public static Bullet GetNewInstance(FoodFightGame3D game, BaseModel owner, int dmg)
     {
       Bullet _instance = new Bullet(game.GraphicsDevice);
       Bullet.GameInstance = game;
       _instance.Position = Vector3.Add(owner.Position, owner.Rotation.Up);
       _instance.Rotation = owner.Rotation;
       _instance.Model = BulletModel.GetNewInstance(game);
+
+      _instance._dmg = dmg;
+      _instance._owner = owner;
 
       game.AllBullets.Enqueue(_instance);
       if (game.AllBullets.Count > FoodFightGame3D.NUMBER_OF_BULLET)
@@ -38,10 +43,10 @@ namespace FoodFight3D
       return _instance;
     }
 
-    public bool IsDead()
-    {
-      return _timer >= TIME_TO_LIVE;
-    }
+    public BaseModel GetOwner() { return this._owner; }
+    public int GetDamage() { return this._dmg; }
+    public void Expended() { this._timer = TIME_TO_LIVE; }
+    public bool IsExpended() { return _timer >= TIME_TO_LIVE; }
 
     public void Update(GameTime gameTime)
     {
@@ -49,14 +54,12 @@ namespace FoodFight3D
       this.UpdatePosition(gameTime);
     }
 
-    public void UpdatePosition(GameTime gameTime)
-    {
-      this.GoForward();
-    }
+    public void UpdatePosition(GameTime gameTime) { this.GoForward(); }
 
     public override void Draw(GameTime gameTime)
     {
-      this.Draw(GameInstance.GetViewMatrix(), GameInstance.GetProjectionMatrix(), Color.Yellow);
+      if (!this.IsExpended())
+        this.Draw(GameInstance.GetViewMatrix(), GameInstance.GetProjectionMatrix(), Color.Yellow);
       
     }
 
