@@ -97,8 +97,7 @@ namespace FoodFight3D
 
     private void _Init()
     {
-//      SoundBank.PlayCue("SOUND_MAIN_LOOP");
-
+      SoundBank.PlayCue("SOUND_MAIN_LOOP");
 
       for (int i = 0; i < NUMBER_OF_POWERUP; i++)
       {
@@ -230,7 +229,7 @@ namespace FoodFight3D
           _lookAtPosition = Vector3.Add(this._jimmy.Position, this._jimmy.Rotation.Up);
           this._viewMatrix = Matrix.CreateLookAt(_cameraPosition, _lookAtPosition, Vector3.UnitZ);
           this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-            MathHelper.ToRadians(45), 800f / 600f, 1f, 100f);
+            MathHelper.ToRadians(90), 800f / 600f, 1f, 100f);
           break;
 
         case Perspective.SPECTATOR:
