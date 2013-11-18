@@ -17,7 +17,7 @@ namespace FoodFight3D
   /// </summary>
   public class FoodFightGame3D : Game
   {
-    public static int DMG_MULTIPLIER = 1000;
+    public static int DMG_MULTIPLIER = 1;
     public static int NUMBER_OF_BULLET = 100;
     public static int NUMBER_OF_POWERUP = 10;
     public static int NUMBER_OF_PIT = 10;
@@ -47,9 +47,6 @@ namespace FoodFight3D
     public Queue<PowerUp> AllPowerUps = new Queue<PowerUp>();
     public Queue<Pit> AllPits = new Queue<Pit>();
     public Queue<EnemyCraft> AllEnemyCrafts = new Queue<EnemyCraft>();
-
-    private float testTimer = 0;
-    private float shootingLimit = 1000;
 
     public FoodFightGame3D()
     {
@@ -112,11 +109,13 @@ namespace FoodFight3D
       Pit.GetNewInstance(this, (new Vector3(-4, -4, -1)));
       Pit.GetNewInstance(this, (new Vector3(4, -4, -1)));
       EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.SPECIAL);
+      EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.ENEMY_TYPE_1);
+      EnemyCraft.GetNewInstance(this, new Vector3(2, 2, 0), Plane.CraftType.ENEMY_TYPE_2);
 
       UI2DElement.GetNewInstance(this, 
-        new Vector2(this._windowBound.Left + 600, this._windowBound.Bottom -25), this._jimmy);
+        new Vector2(this._windowBound.Right - 50, this._windowBound.Bottom -25), this._jimmy);
       UI2DElement.GetNewInstance(this, 
-        new Vector2(this._windowBound.Left + 300, this._windowBound.Bottom - 25),
+        new Vector2(this._windowBound.Left + 500, this._windowBound.Bottom - 25),
         this._jimmy.GetAmmoSlot());
       UI2DElement.GetNewInstance(this,
         new Vector2(this._windowBound.Left + 5, this._windowBound.Bottom - 25), this._cake);
@@ -145,8 +144,6 @@ namespace FoodFight3D
       this._UpdateCamera();
       this._jimmy.Update(gameTime);
       this._cake.Update(gameTime);
-
-      testTimer += gameTime.ElapsedGameTime.Milliseconds;
 
       foreach (UI2DElement element in AllUIElements) element.Update(gameTime);
 

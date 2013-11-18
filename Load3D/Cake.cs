@@ -12,7 +12,7 @@ namespace FoodFight3D
   {
 
     public static FoodFightGame3D GameInstance;
-    public static int TIME_TO_LIVE = 10000;
+    public static int TIME_TO_LIVE = 600000;
     public static int BAR_COUNT = 20;
 
     private int _timeToLive;
