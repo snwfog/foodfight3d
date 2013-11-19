@@ -41,6 +41,7 @@ namespace FoodFight3D
 
     private Rectangle _windowBound;
     private bool _gameOver;
+    private bool _gameWin;
 
     public enum Perspective { UP, FIRST, SPECTATOR }
 
@@ -125,6 +126,8 @@ namespace FoodFight3D
         this._UpdateCamera();
         this._jimmy.Update(gameTime);
         this._cake.Update(gameTime);
+        if (this._cake.Intersect(this._jimmy))
+          throw new GameWin("You Win");
 
         foreach (UI2DElement element in AllUIElements) element.Update(gameTime);
 
@@ -168,6 +171,10 @@ namespace FoodFight3D
       {
         _gameOver = true;
       }
+      catch (GameWin e)
+      {
+        _gameWin = true;
+      }
     }
 
     protected override void Draw(GameTime gameTime)
@@ -177,7 +184,14 @@ namespace FoodFight3D
       if (this._gameOver)
       {
         SpriteBatch.Begin();
-        SpriteBatch.DrawString(this.Mono12, "Game Over",
+        SpriteBatch.DrawString(this.Mono12, "Game Over!",
+          new Vector2(this._windowBound.Right / 2 - 50, this._windowBound.Bottom / 2), Color.White);
+        SpriteBatch.End();
+      }
+      else if (this._gameWin)
+      {
+        SpriteBatch.Begin();
+        SpriteBatch.DrawString(this.Mono12, "You Win!",
           new Vector2(this._windowBound.Right / 2 - 50, this._windowBound.Bottom / 2), Color.White);
         SpriteBatch.End();
       }
@@ -241,4 +255,5 @@ namespace FoodFight3D
   }
 
   public class GameOver : Exception { public GameOver(string msg) : base(msg) { } }
+  public class GameWin : Exception { public GameWin(string msg) : base(msg) { } }
 }
