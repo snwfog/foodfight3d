@@ -15,11 +15,13 @@ namespace FoodFight3D
     public float SpeedRotation;
 
     public Vector3 Position { get; set; }
+    public Vector3 InitialPosition { get; set; }
     public Vector3 Direction { get; set; }
     public Matrix Rotation { get; set; }
 
     public BoundingSphere BoundingSphere { get; set; }
     public CubePrimitive BoundingBox { get; set; }
+    public Trajectory Trajectory { get; set; }
 
     protected IModel Model;
     public Color Color = Color.White;
@@ -36,6 +38,7 @@ namespace FoodFight3D
       SpeedMovement = 1;
       SpeedRotation = 1;
       BoundingSphere = new BoundingSphere(Vector3.Zero, 1.0f);
+      Trajectory = new Trajectory(SpeedMovement, 0);
     }
 
     public Matrix GetWorldTransform()
@@ -68,57 +71,21 @@ namespace FoodFight3D
       // http://stackoverflow.com/questions/8912931/xna-create-a-rotation-about-the-forward-vector 
     }
 
-    protected void YawCounterClockwise()
-    {
-      this.Yaw(-1);
-    }
+    protected void YawCounterClockwise() { this.Yaw(-1); }
+    protected void YawClockwise() { this.Yaw(1); }
 
-    protected void YawClockwise()
-    {
-      this.Yaw(1);
-    }
+    protected void PitchForward() { this.Pitch(-1); }
+    protected void PitchBackward() { this.Pitch(1); }
 
-    protected void PitchForward()
-    {
-      this.Pitch(-1);
-    }
+    protected void RollLeft() { this.Roll(-1); }
 
-    protected void PitchBackward()
-    {
-      this.Pitch(1);
-    }
+    protected void RollRight() { this.Roll(1); }
 
-    protected void RollLeft()
-    {
-      this.Roll(-1);
-    }
+    protected void GoForward() { this.GoFrontBack(1); }
+    protected void GoBackward() { this.GoFrontBack(-1); }
 
-    protected void RollRight()
-    {
-      this.Roll(1);
-    }
-
-    protected void GoForward()
-    {
-      this.GoFrontBack(1);
-    }
-
-    protected void GoBackward()
-    {
-      this.GoFrontBack(-1);
-    }
-
-    protected void GoLeft()
-    {
-      this.GoLeftRight(-1);
-    }
-
-    protected void GoRight()
-    {
-      this.GoLeftRight(1);
-    }
-
-
+    protected void GoLeft() { this.GoLeftRight(-1); }
+    protected void GoRight() { this.GoLeftRight(1); } 
 
     protected void Yaw(float angle)
     {
@@ -143,6 +110,21 @@ namespace FoodFight3D
     protected void GoLeftRight(float distance)
     {
       this.Position += this.Rotation.Right * distance * SpeedMovement;
+    }
+
+    protected Vector3 GetPosition(float time)
+    {
+      return this.Position;
+    }
+
+    protected void FollowTrajectory(float time)
+    {
+      Vector2 _position = Trajectory.GetPosition(time);
+      float _x = this.InitialPosition.X + this.Rotation.Up.X * _position.X;
+      float _y = this.InitialPosition.Y + this.Rotation.Up.Y * _position.X;
+      float _z = this.InitialPosition.Z + 0.000002f * _position.Y;
+
+      this.Position = new Vector3(_x, _y, _z);
     }
 
     public virtual void Draw(GameTime gameTime)

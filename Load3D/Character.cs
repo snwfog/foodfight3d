@@ -32,19 +32,14 @@ namespace FoodFight3D
       _ammoSlot = new AmmoSlot();
     }
 
-    private static Character _Initialize(FoodFightGame3D game)
+    public static Character GetNewInstance(FoodFightGame3D game, Vector3 position)
     {
-      Character _instance = new Character(Vector3.Zero, Matrix.Identity);
+      Character _instance = new Character(position, Matrix.Identity);
       Character.GameInstance = game;
 
       _instance.Model = Plane.GetNewInstance(game, Plane.CraftType.JIMMY);
       _instance.Color = Color.White;
       return _instance;
-    }
-
-    public static Character GetNewInstance(FoodFightGame3D game)
-    {
-      return _Initialize(game);
     }
 
     public void Shoot(GameTime gameTime)

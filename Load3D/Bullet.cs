@@ -11,9 +11,11 @@ namespace FoodFight3D
 {
   public class Bullet : BaseModel, IAutoMoveable
   {
-    public static float BULLET_SPEED = 0.15f;
+    public static float BULLET_SPEED_XY = 0.00255f;
+    public static float BULLET_SPEED_Z = 1000.0125f;
+    public static float BULLET_ACCELERATION = 1.0005f;
     public static float BULLET_SIZE = 0.1f;
-    public static float TIME_TO_LIVE = 5000;
+    public static float TIME_TO_LIVE = 20000;
 
 //    private BaseModel _owner;
     private float _timer;
@@ -22,7 +24,9 @@ namespace FoodFight3D
 
     public Bullet(GraphicsDevice graphicsDevice)
     {
-      SpeedMovement = BULLET_SPEED;
+      this.SpeedMovement = BULLET_SPEED_XY;
+      this.Trajectory = new ParabolicTrajectory(
+        BULLET_SPEED_XY, BULLET_SPEED_Z, BULLET_ACCELERATION);
     }
 
     public static Bullet GetNewInstance(FoodFightGame3D game, BaseModel owner, int dmg)
@@ -30,6 +34,7 @@ namespace FoodFight3D
       Bullet _instance = new Bullet(game.GraphicsDevice);
       Bullet.GameInstance = game;
       _instance.Position = Vector3.Add(owner.Position, owner.Rotation.Up);
+      _instance.InitialPosition = _instance.Position;
       _instance.Rotation = owner.Rotation;
       _instance.Model = BulletModel.GetNewInstance(game);
 
@@ -54,7 +59,10 @@ namespace FoodFight3D
       this.UpdatePosition(gameTime);
     }
 
-    public void UpdatePosition(GameTime gameTime) { this.GoForward(); }
+    public void UpdatePosition(GameTime gameTime)
+    {
+      this.FollowTrajectory(_timer); 
+    }
 
     public override void Draw(GameTime gameTime)
     {

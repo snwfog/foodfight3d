@@ -21,7 +21,7 @@ namespace FoodFight3D
     public static int NUMBER_OF_BULLET = 100;
     public static int NUMBER_OF_POWERUP = 40;
     public static int NUMBER_OF_PIT = 10;
-    public static int NUMBER_OF_ENEMY = 4;
+    public static int NUMBER_OF_ENEMY = 0;
 
     GraphicsDeviceManager graphics;
     SpriteBatch SpriteBatch;
@@ -58,7 +58,7 @@ namespace FoodFight3D
       this.graphics.PreferredBackBufferHeight = this._windowBound.Height;
       //this.graphics.IsFullScreen = true;
 
-      this._jimmy = Character.GetNewInstance(this);
+      this._jimmy = Character.GetNewInstance(this, new Vector3(0, -14, 0));
       this._cake = Cake.GetNewInstance(this, new Vector3(0, 14, 0));
     }
 
