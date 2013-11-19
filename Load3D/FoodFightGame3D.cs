@@ -40,6 +40,7 @@ namespace FoodFight3D
     private Cake _cake;
 
     private Rectangle _windowBound;
+    private bool _gameOver;
 
     public enum Perspective { UP, FIRST, SPECTATOR }
 
@@ -165,7 +166,7 @@ namespace FoodFight3D
       }
       catch (GameOver e)
       {
-        Environment.Exit(1);
+        _gameOver = true;
       }
     }
 
@@ -173,15 +174,25 @@ namespace FoodFight3D
     {
       GraphicsDevice.Clear(Color.Black);
 
-      this._jimmy.Draw(gameTime);
-      this._cake.Draw(gameTime);
-      foreach (UI2DElement element in AllUIElements) element.Draw(SpriteBatch);
-      foreach (Bullet bullet in AllBullets) bullet.Draw(gameTime);
-      foreach (PowerUp powerup in AllPowerUps) powerup.Draw(gameTime);
-      foreach (Pit pit in AllPits) pit.Draw(gameTime);
-      foreach (EnemyCraft craft in AllEnemyCrafts) craft.Draw(gameTime);
+      if (this._gameOver)
+      {
+        SpriteBatch.Begin();
+        SpriteBatch.DrawString(this.Mono12, "Game Over",
+          new Vector2(this._windowBound.Right / 2 - 50, this._windowBound.Bottom / 2), Color.White);
+        SpriteBatch.End();
+      }
+      else
+      {
+        this._jimmy.Draw(gameTime);
+        this._cake.Draw(gameTime);
+        foreach (UI2DElement element in AllUIElements) element.Draw(SpriteBatch);
+        foreach (Bullet bullet in AllBullets) bullet.Draw(gameTime);
+        foreach (PowerUp powerup in AllPowerUps) powerup.Draw(gameTime);
+        foreach (Pit pit in AllPits) pit.Draw(gameTime);
+        foreach (EnemyCraft craft in AllEnemyCrafts) craft.Draw(gameTime);
 
-      base.Draw(gameTime);
+        base.Draw(gameTime);
+      }
     }
 
     private void _UpdateCamera()
