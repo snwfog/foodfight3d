@@ -181,7 +181,12 @@ namespace FoodFight3D
         if (pit.Intersect(this._jimmy))
           this._jimmy.SlowDownBy(pit);
       }
-      foreach (EnemyCraft craft in AllEnemyCrafts) craft.Update(gameTime);
+      foreach (EnemyCraft craft in AllEnemyCrafts)
+      {
+        craft.Update(gameTime);
+        if (this._jimmy.Intersect(craft))
+          this._jimmy.CollideWith(craft);
+      }
 
       base.Update(gameTime);
     }

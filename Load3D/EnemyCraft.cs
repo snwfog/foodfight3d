@@ -19,6 +19,7 @@ namespace FoodFight3D
     public static int ENEMY_CRAFT_STRENGTH = 5;
     public static int HIT_ANIMATION_DURATION = 200;
     public static int FLASH_INTERVAL = 200;
+    public static int ON_HIT_DAMAGE = 20;
 
     private float _spawnAnimationTimer;
     private float _hitAnimationTimer;

@@ -11,7 +11,7 @@ namespace FoodFight3D
 {
   public class Bullet : BaseModel, IAutoMoveable
   {
-    public static float BULLET_SPEED_XY = 0.00255f;
+    public static float BULLET_SPEED_XY = 0.00555f;
     public static float BULLET_SPEED_Z = 1000.0125f;
     public static float BULLET_ACCELERATION = 1.0005f;
     public static float BULLET_SIZE = 0.1f;
@@ -67,13 +67,14 @@ namespace FoodFight3D
     public override void Draw(GameTime gameTime)
     {
       if (!this.IsExpended())
-        this.Draw(GameInstance.GetViewMatrix(), GameInstance.GetProjectionMatrix(), Color.Yellow);
-      
+        this.Draw(GameInstance.GetViewMatrix(),
+          GameInstance.GetProjectionMatrix(), Color.Yellow);
     }
 
     public void Draw(Matrix view, Matrix projection, Color color)
     {
-      Model.Draw(Matrix.CreateTranslation(this.Position), view, projection, color);
+      Model.Draw(Matrix.CreateTranslation(this.Position), 
+        view, projection, color);
     }
   }
 }

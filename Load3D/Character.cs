@@ -5,6 +5,7 @@ using System.Net.Mime;
 using System.Text;
 using FoodFighGame3D;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -12,8 +13,10 @@ namespace FoodFight3D
 {
   public class Character : BaseModel, IWatchableElement
   {
-    public static float MOVEMENT_SPEED = 0.05f;
+    public static float MOVEMENT_SPEED = 0.04f;
     public static float ROTATION_SPEED = 0.05f;
+    public static float MOVEMENT_REDUCER = 0.01f;
+
     public static int DEFAULT_STRENGTH = 100;
     public static int MIN_SHOOT_INTERVAL = 200;
     public static int HIT_ANIMATION_DURATION = 200;
@@ -135,11 +138,18 @@ namespace FoodFight3D
 
     public void SlowDownBy(Pit pit)
     {
-      this.SpeedMovement = 0.01f;
-      this.SpeedRotation = 0.01f;
+      this.SpeedMovement = MOVEMENT_REDUCER;
+      this.SpeedRotation = MOVEMENT_REDUCER;
 
       this._isInPIt = true;
       this._inPit = pit;
+    }
+
+    public void CollideWith(EnemyCraft craft)
+    {
+      craft.Spawn();
+      this.Strength -= EnemyCraft.ON_HIT_DAMAGE;
+      GameInstance.SoundBank.PlayCue("SOUND_SPAWN_02");
     }
 
     private void _SlowInPit(GameTime gameTime)
@@ -148,7 +158,7 @@ namespace FoodFight3D
       if (this._inPit.Intersect(this))
       {
         if (GameInstance.SoundBank.GetCue("SOUND_SPAWN_01").IsStopped)
-          GameInstance.SoundBank.PlayCue("SOUND_SPAWN_01");
+          GameInstance.SoundBank.GetCue("SOUND_SPAWN_01").Play();
         if (this._inPitTickTimer > IN_PIT_TICK)
         {
           this.Strength -= IN_PIT_REDUCE_PER_TICK;
@@ -160,6 +170,7 @@ namespace FoodFight3D
         this.SpeedMovement = MOVEMENT_SPEED;
         this.SpeedRotation = ROTATION_SPEED;
         this._isInPIt = false;
+        GameInstance.SoundBank.GetCue("SOUND_SPAWN_01").Stop(new AudioStopOptions());
       }
     }
 
