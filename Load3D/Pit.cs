@@ -12,7 +12,7 @@ namespace FoodFight3D
 
     private EnemyCraft _owner;
 
-    private Pit(Vector3 position) : base(position, Matrix.Identity)
+    public Pit(Vector3 position) : base(position, Matrix.Identity)
     {
     }
 
@@ -33,12 +33,18 @@ namespace FoodFight3D
       return _pit;
     }
 
-
+    public EnemyCraft GetOwner() { return this._owner; }
     public void TakeOverBy(EnemyCraft craft)
     {
       _owner = craft;
       craft.OccupingPit(this);
       craft.Position = this.Position + (new Vector3(0, 0, 1));
+    }
+
+    public void TakingOverBy(EnemyCraft craft)
+    {
+      _owner = craft;
+      craft.GetOccupyingPit().Evict();
     }
 
     public void Evict() { _owner = null; }
@@ -53,6 +59,27 @@ namespace FoodFight3D
 
       Matrix world = PitModel.STRAIGHTNER_MATRIX * Matrix.CreateTranslation(this.Position);
       base.Draw(gameTime, world);
+    }
+
+    public static Pit GetAFreePit()
+    {
+      Pit _pit = GameInstance.AllPits.First();
+      // Hashing function here
+      for (int i = RANDOM.Next(GameInstance.AllPits.Count),
+        d = 1 + (RANDOM.Next(GameInstance.AllPits.Count - 1)),
+        j = 0,
+        k = i;
+        j < GameInstance.AllPits.Count;
+        ++j, k = (i + j * d) % GameInstance.AllPits.Count)
+      {
+        _pit = GameInstance.AllPits[k];
+        if (_pit.IsFree())
+        {
+          break;
+        }
+      }
+
+      return _pit;
     }
   }
 }

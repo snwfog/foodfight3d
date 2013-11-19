@@ -42,7 +42,7 @@ namespace FoodFight3D
       this.DrawModel(this.Model, this.World, this.View, this.Projection, this.Color, this.Texture);
     }
 
-    protected void DrawModel(Model model, Matrix world, Matrix view, Matrix projection, 
+    protected virtual void DrawModel(Model model, Matrix world, Matrix view, Matrix projection, 
       Color color, Texture2D texture)
     {
       foreach (ModelMesh mesh in model.Meshes)

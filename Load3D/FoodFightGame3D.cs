@@ -1,5 +1,6 @@
 ﻿#region Using Statements
 
+using System;
 using System.Collections.Generic;
 using FoodFight3D.ObjectModel;
 using Microsoft.Xna.Framework;
@@ -17,11 +18,12 @@ namespace FoodFight3D
   /// </summary>
   public class FoodFightGame3D : Game
   {
+    public static int GAME_TIME = 60000;
     public static int DMG_MULTIPLIER = 1;
     public static int NUMBER_OF_BULLET = 100;
     public static int NUMBER_OF_POWERUP = 40;
-    public static int NUMBER_OF_PIT = 3;
-    public static int NUMBER_OF_ENEMY = 3;
+    public static int NUMBER_OF_PIT = 10;
+    public static int NUMBER_OF_ENEMY = 5;
 
     GraphicsDeviceManager graphics;
     SpriteBatch SpriteBatch;
@@ -99,11 +101,11 @@ namespace FoodFight3D
       for (int i = 0; i < NUMBER_OF_ENEMY; i++)
         EnemyCraft.GetNewInstance(this);
 
-      UI2DElement.GetNewInstance(this, 
-        new Vector2(this._windowBound.Right - 50, this._windowBound.Bottom -25), 
+      UI2DElement.GetNewInstance(this,
+        new Vector2(this._windowBound.Right - 50, this._windowBound.Bottom - 25),
         this._jimmy);
 
-      UI2DElement.GetNewInstance(this, 
+      UI2DElement.GetNewInstance(this,
         new Vector2(this._windowBound.Left + 500, this._windowBound.Bottom - 25),
         this._jimmy.GetAmmoSlot());
 
@@ -113,50 +115,58 @@ namespace FoodFight3D
 
     protected override void Update(GameTime gameTime)
     {
-      // Allows the game to exit
-      if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-        this.Exit();
-
-      this._UpdateCamera();
-      this._jimmy.Update(gameTime);
-      this._cake.Update(gameTime);
-
-      foreach (UI2DElement element in AllUIElements) element.Update(gameTime);
-
-      foreach (Bullet bullet in AllBullets)
+      try
       {
-        if (bullet.IsExpended()) continue;
+        // Allows the game to exit
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+          this.Exit();
 
-        bullet.Update(gameTime);
-        if (bullet.GetOwner() is EnemyCraft && bullet.Intersect(this._jimmy))
-          this._jimmy.HitBy(bullet);
-        else if (bullet.GetOwner() is Character)
-          foreach (EnemyCraft _craft in AllEnemyCrafts)
-            if (!_craft.IsSpawning() && bullet.Intersect(_craft))
-              _craft.HitBy(bullet);
+        this._UpdateCamera();
+        this._jimmy.Update(gameTime);
+        this._cake.Update(gameTime);
+
+        foreach (UI2DElement element in AllUIElements) element.Update(gameTime);
+
+        foreach (Bullet bullet in AllBullets)
+        {
+          if (bullet.IsExpended()) continue;
+
+          bullet.Update(gameTime);
+          if (bullet.GetOwner() is EnemyCraft && bullet.Intersect(this._jimmy))
+            this._jimmy.HitBy(bullet);
+          else if (bullet.GetOwner() is Character)
+            foreach (EnemyCraft _craft in AllEnemyCrafts)
+              if (!_craft.IsSpawning() && bullet.Intersect(_craft))
+                _craft.HitBy(bullet);
+        }
+
+        foreach (PowerUp powerup in AllPowerUps)
+        {
+          powerup.Update(gameTime);
+          if (powerup.Intersect(this._jimmy))
+            this._jimmy.PickUp(powerup);
+        }
+
+        foreach (Pit pit in AllPits)
+        {
+          pit.Update(gameTime);
+          if (pit.Intersect(this._jimmy))
+            this._jimmy.SlowDownBy(pit);
+        }
+        foreach (EnemyCraft craft in AllEnemyCrafts)
+        {
+          craft.Update(gameTime);
+          if (this._jimmy.Intersect(craft))
+            this._jimmy.CollideWith(craft);
+        }
+
+        base.Update(gameTime);
+
       }
-
-      foreach (PowerUp powerup in AllPowerUps)
+      catch (GameOver e)
       {
-        powerup.Update(gameTime);
-        if (powerup.Intersect(this._jimmy))
-          this._jimmy.PickUp(powerup);
+        Environment.Exit(1);
       }
-
-      foreach (Pit pit in AllPits)
-      {
-        pit.Update(gameTime);
-        if (pit.Intersect(this._jimmy))
-          this._jimmy.SlowDownBy(pit);
-      }
-      foreach (EnemyCraft craft in AllEnemyCrafts)
-      {
-        craft.Update(gameTime);
-        if (this._jimmy.Intersect(craft))
-          this._jimmy.CollideWith(craft);
-      }
-
-      base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
@@ -192,8 +202,8 @@ namespace FoodFight3D
       {
         case Perspective.UP:
           this._viewMatrix = Matrix.CreateLookAt(
-            new Vector3(0, 0, 20), 
-            new Vector3(0, 0, 0), 
+            new Vector3(0, 0, 20),
+            new Vector3(0, 0, 0),
             Vector3.UnitX);
           this._projectionMatrix = Matrix.CreateOrthographic(32, 24, -50, 50);
           break;
@@ -208,8 +218,8 @@ namespace FoodFight3D
 
         case Perspective.SPECTATOR:
           this._viewMatrix = Matrix.CreateLookAt(
-            new Vector3(-20, 0, 20), 
-            new Vector3(0, 0, 0), 
+            new Vector3(-20, 0, 20),
+            new Vector3(0, 0, 0),
             Vector3.UnitX);
 
           this._projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
@@ -218,4 +228,6 @@ namespace FoodFight3D
       }
     }
   }
+
+  public class GameOver : Exception { public GameOver(string msg) : base(msg) { } }
 }

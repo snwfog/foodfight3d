@@ -20,11 +20,13 @@ namespace FoodFight3D
     public static int HIT_ANIMATION_DURATION = 200;
     public static int FLASH_INTERVAL = 200;
     public static int ON_HIT_DAMAGE = 20;
+    public static int MAX_TAKE_OVER_ELAPSED_TIME = 10000;
 
     private float _spawnAnimationTimer;
     private float _hitAnimationTimer;
     private float _flashTimer;
     private bool _flashToggle;
+
 
     private float _shootIntervalTimer, _currentShootIntervalTimer = MIN_SHOOT_INTERVAL_TIMER;
     private float _yawIntervalTimer, _currentYawIntervalTimer = MIN_YAW_INTERVAL_TIMER;
@@ -33,11 +35,17 @@ namespace FoodFight3D
 
     private Pit _occupyPit;
 
+    private Pit _takingOverPit;
+    private bool _isTakingOverPit;
+    public float _takeOverTimer;
+    public float _takeOverInterval;
+
     private EnemyCraft(Vector3 position)
       : base(position, Matrix.Identity)
     {
       SpeedMovement = YAW_SPEED;
       this._health = ENEMY_CRAFT_STRENGTH;
+      this._takeOverInterval = MAX_TAKE_OVER_ELAPSED_TIME;
     }
 
     public static EnemyCraft GetNewInstance(FoodFightGame3D game)
@@ -82,26 +90,25 @@ namespace FoodFight3D
       return _craft;
     }
 
+
+    private void _CleanPits()
+    {
+      if (this._occupyPit != null && this._occupyPit.GetOwner() == this)
+        this._occupyPit.Evict();
+      if (this._takingOverPit != null && this._takingOverPit.GetOwner() == this)
+        this._takingOverPit.Evict();
+    }
+
     public void Spawn()
     {
       this._health = ENEMY_CRAFT_STRENGTH;
       this._spawnAnimationTimer = SPAWN_ANIMATION_TIMER;
+      this._ReachedPit();
+      this._CleanPits();
       GameInstance.SoundBank.PlayCue("SOUND_SPAWN_03");
 
-      // Hashing function here
-      for (int i = RANDOM.Next(GameInstance.AllPits.Count),
-        d = 1 + RANDOM.Next(GameInstance.AllPits.Count),
-        j = 0, k = i;
-        j < GameInstance.AllPits.Count;
-        ++j, k = (i + j * d) % GameInstance.AllPits.Count)
-      {
-        Pit pit = GameInstance.AllPits[k];
-        if (pit.IsFree())
-        {
-          pit.TakeOverBy(this);
-          break;
-        }
-      }
+      Pit _freePit = Pit.GetAFreePit();
+      _freePit.TakeOverBy(this);
     }
 
     public void OccupingPit(Pit pit) { this._occupyPit = pit; }
@@ -142,7 +149,6 @@ namespace FoodFight3D
       }
       catch (Exception)
       {
-        this._occupyPit.Evict();
         this.Spawn();
       }
     }
@@ -152,8 +158,14 @@ namespace FoodFight3D
       _shootIntervalTimer += gameTime.ElapsedGameTime.Milliseconds;
       _yawIntervalTimer += gameTime.ElapsedGameTime.Milliseconds;
       _hitAnimationTimer -= gameTime.ElapsedGameTime.Milliseconds;
-      _spawnAnimationTimer -= gameTime.ElapsedGameTime.Milliseconds;
 
+      if (this._isTakingOverPit)
+      {
+        this._TakingOverPit(gameTime);
+        return;
+      }
+
+      _spawnAnimationTimer -= gameTime.ElapsedGameTime.Milliseconds;
       if (_spawnAnimationTimer > 0)
       {
         _flashTimer += gameTime.ElapsedGameTime.Milliseconds;
@@ -163,6 +175,20 @@ namespace FoodFight3D
           _flashTimer = 0;
         }
         return;
+      }
+
+      if (!this._isTakingOverPit) _takeOverTimer += gameTime.ElapsedGameTime.Milliseconds;
+      if (_takeOverTimer > _takeOverInterval)
+      {
+        this._takeOverTimer = 0;
+        this._takeOverInterval = MAX_TAKE_OVER_ELAPSED_TIME
+          + RANDOM.Next(MAX_TAKE_OVER_ELAPSED_TIME);
+        if (RANDOM.Next(100) > 1)
+        {
+          Pit _freePit = Pit.GetAFreePit();
+          if (_freePit.IsFree())
+            this._TakeOverPit(Pit.GetAFreePit());
+        }
       }
 
       if (_hitAnimationTimer < 0) _hitAnimationTimer = 0;
@@ -215,6 +241,66 @@ namespace FoodFight3D
         base.Draw(gameTime, this.GetWorldTransform(), Color.Red);
       else
         base.Draw(gameTime);
+    }
+
+    public bool IsTakingOverPit() { return this._isTakingOverPit; }
+
+    private bool _IsReachedPit()
+    {
+      return Math.Abs(this.Position.X - this._takingOverPit.Position.X) < 0.1
+        && Math.Abs(this.Position.Y - this._takingOverPit.Position.Y) < 0.1;
+    }
+
+    private void _ReachedPit() { this._isTakingOverPit = false; }
+
+    private void _TakingOverPit(GameTime gameTime)
+    {
+      Vector2 _thisPosition = new Vector2(this.Position.X, this.Position.Y);
+      Vector2 _pitPosition = new Vector2(this._takingOverPit.Position.X, 
+        this._takingOverPit.Position.Y);
+      Vector2 _vector = _pitPosition - _thisPosition;
+      Vector3 _vector3 = (new Vector3(_vector.X, _vector.Y, 0));
+      _vector3.Normalize();
+      Vector3 _align = this.Rotation.Up;
+
+      if (!this._IsReachedPit())
+      {
+        if (!(Math.Abs(_vector3.X - _align.X) < 0.005
+              && Math.Abs(_vector3.Y - _align.Y) < 0.005))
+        {
+          if (this._ClockOrCounterClock(_vector3, _align))
+            this.Yaw(0.01f);
+          else
+            this.Yaw(-0.01f);
+          return;
+
+        }
+
+        this.GoForward();
+      }
+      else
+      {
+        this._ReachedPit();
+        this._takingOverPit.TakeOverBy(this);
+        this._takingOverPit = null;
+      }
+    }
+
+    public Pit GetOccupyingPit() { return this._occupyPit; }
+
+    private void _TakeOverPit(Pit pit)
+    {
+      pit.TakingOverBy(this);
+      this._occupyPit = null;
+      this._takingOverPit = pit;
+      this._isTakingOverPit = true;
+    }
+
+    private bool _ClockOrCounterClock(Vector3 vec1, Vector3 vec2)
+    {
+      Vector3 _new = Vector3.Cross(vec1, vec2);
+      Vector3 _new1 = Vector3.Cross(vec2, vec1);
+      return _new.Z >= _new1.Z;
     }
   }
 }

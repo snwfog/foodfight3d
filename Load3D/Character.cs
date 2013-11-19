@@ -124,6 +124,12 @@ namespace FoodFight3D
 
     public void Update(GameTime gameTime)
     {
+      if (this.Strength < 0)
+      {
+        this.Strength = 0;
+        throw new GameOver("Game Over");
+      }
+
       _hitAnimationTimer -= gameTime.ElapsedGameTime.Milliseconds;
       if (_hitAnimationTimer < 0) _hitAnimationTimer = 0;
 

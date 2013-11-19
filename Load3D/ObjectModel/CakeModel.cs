@@ -34,5 +34,35 @@ namespace FoodFight3D.ObjectModel
     {
       _shape.Draw(STRAIGHTNER_MATRIX * world, view, projection, color);
     }
+
+    protected override void DrawModel(Model model, Matrix world, Matrix view, Matrix projection, Color color, Texture2D texture)
+    {
+      foreach (ModelMesh mesh in model.Meshes)
+      {
+        foreach (BasicEffect effect in mesh.Effects)
+        {
+          if (texture != null)
+          {
+            effect.TextureEnabled = true;
+            effect.Texture = texture;
+          }
+
+          effect.EnableDefaultLighting();
+//          effect.DirectionalLight0.DiffuseColor = Color.White.ToVector3();
+//          effect.DirectionalLight0.DiffuseColor = Color.Blue.ToVector3();
+//          effect.DirectionalLight0.SpecularColor = Color.Green.ToVector3();
+//          effect.AmbientLightColor = Color.Pink.ToVector3();
+//          effect.EmissiveColor = Color.Orange.ToVector3();
+//          effect.DirectionalLight0.Enabled = false;
+
+          effect.DiffuseColor = color.ToVector3();
+          effect.World = world;
+          effect.View = view;
+          effect.Projection = projection;
+        }
+
+        mesh.Draw();
+      }
+    }
   }
 }
