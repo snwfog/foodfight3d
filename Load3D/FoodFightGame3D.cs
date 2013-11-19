@@ -20,8 +20,8 @@ namespace FoodFight3D
     public static int DMG_MULTIPLIER = 1;
     public static int NUMBER_OF_BULLET = 100;
     public static int NUMBER_OF_POWERUP = 40;
-    public static int NUMBER_OF_PIT = 10;
-    public static int NUMBER_OF_ENEMY = 2;
+    public static int NUMBER_OF_PIT = 3;
+    public static int NUMBER_OF_ENEMY = 3;
 
     GraphicsDeviceManager graphics;
     SpriteBatch SpriteBatch;
@@ -65,23 +65,6 @@ namespace FoodFight3D
     public Matrix GetViewMatrix() { return this._viewMatrix; }
     public Matrix GetProjectionMatrix() { return this._projectionMatrix; }
 
-    /// <summary>
-    /// Allows the game to perform any initialization it needs to before starting to run.
-    /// This is where it can query for any required services and load any non-graphic
-    /// related content.  Calling base.Initialize will enumerate through any components
-    /// and initialize them as well.
-    /// </summary>
-    protected override void Initialize()
-    {
-      // TODO: Add your initialization logic here
-
-      base.Initialize();
-    }
-
-    /// <summary>
-    /// LoadContent will be called once per game and is the place to load
-    /// all of your content.
-    /// </summary>
     protected override void LoadContent()
     {
       // Create a new SpriteBatch, which can be used to draw textures.
@@ -113,9 +96,8 @@ namespace FoodFight3D
         Pit.GetNewInstance(this, _position);
       }
 
-      EnemyCraft.GetNewInstance(this, Plane.CraftType.SPECIAL);
-      EnemyCraft.GetNewInstance(this, Plane.CraftType.ENEMY_TYPE_1);
-      EnemyCraft.GetNewInstance(this, Plane.CraftType.ENEMY_TYPE_2);
+      for (int i = 0; i < NUMBER_OF_ENEMY; i++)
+        EnemyCraft.GetNewInstance(this);
 
       UI2DElement.GetNewInstance(this, 
         new Vector2(this._windowBound.Right - 50, this._windowBound.Bottom -25), 
@@ -129,20 +111,6 @@ namespace FoodFight3D
         new Vector2(this._windowBound.Left + 5, this._windowBound.Bottom - 25), this._cake);
     }
 
-    /// <summary>
-    /// UnloadContent will be called once per game and is the place to unload
-    /// all content.
-    /// </summary>
-    protected override void UnloadContent()
-    {
-      // TODO: Unload any non ContentManager content here
-    }
-
-    /// <summary>
-    /// Allows the game to run logic such as updating the world,
-    /// checking for collisions, gathering input, and playing audio.
-    /// </summary>
-    /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Update(GameTime gameTime)
     {
       // Allows the game to exit
@@ -191,10 +159,6 @@ namespace FoodFight3D
       base.Update(gameTime);
     }
 
-    /// <summary>
-    /// This is called when the game should draw itself.
-    /// </summary>
-    /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Draw(GameTime gameTime)
     {
       GraphicsDevice.Clear(Color.Black);

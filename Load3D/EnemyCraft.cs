@@ -12,11 +12,11 @@ namespace FoodFight3D
   {
     public static float YAW_SPEED = 0.022f;
     public static int SPAWN_ANIMATION_TIMER = 4000; // Time for the animation of the spawning;
-    public static int MIN_SHOOT_INTERVAL_TIMER = 100;
-    public static int MAX_SHOOT_INTERVAL_TIMER = 2000;
+    public static int MIN_SHOOT_INTERVAL_TIMER = 200;
+    public static int MAX_SHOOT_INTERVAL_TIMER = 800;
     public static int MIN_YAW_INTERVAL_TIMER = 200;
     public static int MAX_YAW_INTERVAL_TIMER = 800;
-    public static int ENEMY_CRAFT_STRENGTH = 5;
+    public static int ENEMY_CRAFT_STRENGTH = 10;
     public static int HIT_ANIMATION_DURATION = 200;
     public static int FLASH_INTERVAL = 200;
     public static int ON_HIT_DAMAGE = 20;
@@ -31,11 +31,36 @@ namespace FoodFight3D
     private int _currentYawDirection;
     private int _health;
 
+    private Pit _occupyPit;
+
     private EnemyCraft(Vector3 position)
       : base(position, Matrix.Identity)
     {
       SpeedMovement = YAW_SPEED;
       this._health = ENEMY_CRAFT_STRENGTH;
+    }
+
+    public static EnemyCraft GetNewInstance(FoodFightGame3D game)
+    {
+      Plane.CraftType _type = Plane.CraftType.ENEMY_TYPE_1;
+
+      switch (RANDOM.Next(4))
+      {
+        case 0:
+          _type = Plane.CraftType.ENEMY_TYPE_1;
+          break;
+        case 1:
+          _type = Plane.CraftType.ENEMY_TYPE_2;
+          break;
+        case 2:
+          _type = Plane.CraftType.ENEMY_TYPE_3;
+          break;
+        case 3:
+          _type = Plane.CraftType.ENEMY_TYPE_4;
+          break;
+      }
+
+      return EnemyCraft.GetNewInstance(game, _type);
     }
 
     public static EnemyCraft GetNewInstance(FoodFightGame3D game, Plane.CraftType type)
@@ -79,6 +104,8 @@ namespace FoodFight3D
       }
     }
 
+    public void OccupingPit(Pit pit) { this._occupyPit = pit; }
+
     public void Shoot(GameTime gameTime)
     {
       Bullet.GetNewInstance(GameInstance, this, 10);
@@ -115,6 +142,7 @@ namespace FoodFight3D
       }
       catch (Exception)
       {
+        this._occupyPit.Evict();
         this.Spawn();
       }
     }
@@ -145,7 +173,8 @@ namespace FoodFight3D
         this.Shoot(gameTime);
         _shootIntervalTimer = 0;
         _currentShootIntervalTimer = RANDOM.Next(
-          MIN_SHOOT_INTERVAL_TIMER, MAX_SHOOT_INTERVAL_TIMER);
+          MIN_SHOOT_INTERVAL_TIMER, MAX_SHOOT_INTERVAL_TIMER)
+          * (ENEMY_CRAFT_STRENGTH - this._health / ENEMY_CRAFT_STRENGTH);
       }
 
       if (_yawIntervalTimer > _currentYawIntervalTimer)

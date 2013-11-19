@@ -33,9 +33,11 @@ namespace FoodFight3D
       return _pit;
     }
 
+
     public void TakeOverBy(EnemyCraft craft)
     {
       _owner = craft;
+      craft.OccupingPit(this);
       craft.Position = this.Position + (new Vector3(0, 0, 1));
     }
 

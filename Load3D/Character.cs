@@ -23,6 +23,8 @@ namespace FoodFight3D
     public static int IN_PIT_REDUCE_PER_TICK = 3;
     public static int IN_PIT_TICK = 200;
 
+    public static int FLASH_INTERVAL = 200;
+
     public int Strength = DEFAULT_STRENGTH;
 
     private AmmoSlot _ammoSlot;
@@ -33,6 +35,8 @@ namespace FoodFight3D
     private bool _isInPIt;
     private float _inPitTickTimer;
     private float _inPitCueTimer;
+    private float _inPitFlashTimer;
+    private bool _flashToggle;
 
     private Character(Vector3 position, Matrix rotation) : base(position, rotation)
     {
@@ -154,15 +158,24 @@ namespace FoodFight3D
 
     private void _SlowInPit(GameTime gameTime)
     {
-      this._inPitTickTimer += gameTime.ElapsedGameTime.Milliseconds;
+
       if (this._inPit.Intersect(this))
       {
+        this._inPitTickTimer += gameTime.ElapsedGameTime.Milliseconds;
+        this._inPitFlashTimer += gameTime.ElapsedGameTime.Milliseconds;
+
         if (GameInstance.SoundBank.GetCue("SOUND_SPAWN_01").IsStopped)
           GameInstance.SoundBank.GetCue("SOUND_SPAWN_01").Play();
         if (this._inPitTickTimer > IN_PIT_TICK)
         {
           this.Strength -= IN_PIT_REDUCE_PER_TICK;
           this._inPitTickTimer = 0;
+        }
+
+        if (this._inPitFlashTimer > FLASH_INTERVAL)
+        {
+          if (_flashToggle) _flashToggle = false; else _flashToggle = true;
+          _inPitFlashTimer = 0;
         }
       }
       else
@@ -194,7 +207,9 @@ namespace FoodFight3D
 
     public void Draw(GameTime gameTime)
     {
-      if (_hitAnimationTimer > 0)
+      if (_isInPIt && _flashToggle)
+        base.Draw(gameTime, this.GetWorldTransform(), Color.Orange);
+      else if (_hitAnimationTimer > 0)
         base.Draw(gameTime, this.GetWorldTransform(), Color.Pink);
       else
         base.Draw(gameTime);
