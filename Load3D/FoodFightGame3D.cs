@@ -21,7 +21,7 @@ namespace FoodFight3D
     public static int NUMBER_OF_BULLET = 100;
     public static int NUMBER_OF_POWERUP = 40;
     public static int NUMBER_OF_PIT = 10;
-    public static int NUMBER_OF_ENEMY = 0;
+    public static int NUMBER_OF_ENEMY = 2;
 
     GraphicsDeviceManager graphics;
     SpriteBatch SpriteBatch;
@@ -175,7 +175,12 @@ namespace FoodFight3D
           this._jimmy.PickUp(powerup);
       }
 
-      foreach (Pit pit in AllPits) pit.Update(gameTime);
+      foreach (Pit pit in AllPits)
+      {
+        pit.Update(gameTime);
+        if (pit.Intersect(this._jimmy))
+          this._jimmy.SlowDownBy(pit);
+      }
       foreach (EnemyCraft craft in AllEnemyCrafts) craft.Update(gameTime);
 
       base.Update(gameTime);

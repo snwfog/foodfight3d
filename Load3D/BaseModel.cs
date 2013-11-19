@@ -78,7 +78,6 @@ namespace FoodFight3D
     protected void PitchBackward() { this.Pitch(1); }
 
     protected void RollLeft() { this.Roll(-1); }
-
     protected void RollRight() { this.Roll(1); }
 
     protected void GoForward() { this.GoFrontBack(1); }

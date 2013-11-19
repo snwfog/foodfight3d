@@ -17,12 +17,19 @@ namespace FoodFight3D
     public static int DEFAULT_STRENGTH = 100;
     public static int MIN_SHOOT_INTERVAL = 200;
     public static int HIT_ANIMATION_DURATION = 200;
+    public static int IN_PIT_REDUCE_PER_TICK = 3;
+    public static int IN_PIT_TICK = 200;
 
     public int Strength = DEFAULT_STRENGTH;
 
     private AmmoSlot _ammoSlot;
     private float _shootTimer;
     private float _hitAnimationTimer;
+
+    private Pit _inPit;
+    private bool _isInPIt;
+    private float _inPitTickTimer;
+    private float _inPitCueTimer;
 
     private Character(Vector3 position, Matrix rotation) : base(position, rotation)
     {
@@ -115,6 +122,7 @@ namespace FoodFight3D
 
       this._MovePosition();
       this._ShootProjectile(gameTime);
+      if (this._isInPIt) this._SlowInPit(gameTime);
     }
 
     public void HitBy(Bullet bullet)
@@ -123,6 +131,36 @@ namespace FoodFight3D
       this.Strength -= bullet.GetDamage() * FoodFightGame3D.DMG_MULTIPLIER;
       this._hitAnimationTimer = HIT_ANIMATION_DURATION;
       GameInstance.SoundBank.PlayCue("SOUND_HIT_01");
+    }
+
+    public void SlowDownBy(Pit pit)
+    {
+      this.SpeedMovement = 0.01f;
+      this.SpeedRotation = 0.01f;
+
+      this._isInPIt = true;
+      this._inPit = pit;
+    }
+
+    private void _SlowInPit(GameTime gameTime)
+    {
+      this._inPitTickTimer += gameTime.ElapsedGameTime.Milliseconds;
+      if (this._inPit.Intersect(this))
+      {
+        if (GameInstance.SoundBank.GetCue("SOUND_SPAWN_01").IsStopped)
+          GameInstance.SoundBank.PlayCue("SOUND_SPAWN_01");
+        if (this._inPitTickTimer > IN_PIT_TICK)
+        {
+          this.Strength -= IN_PIT_REDUCE_PER_TICK;
+          this._inPitTickTimer = 0;
+        }
+      }
+      else
+      {
+        this.SpeedMovement = MOVEMENT_SPEED;
+        this.SpeedRotation = ROTATION_SPEED;
+        this._isInPIt = false;
+      }
     }
 
     private void _ShootProjectile(GameTime gameTime)

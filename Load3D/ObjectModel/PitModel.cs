@@ -20,6 +20,7 @@ namespace FoodFight3D.ObjectModel
     private PitModel(GraphicsDevice graphics)
     {
       _shape = new CylinderPrimitive(graphics, 0.2f, 1, 32);
+      this.BoundingSphere.Add(new BoundingSphere(Vector3.Zero, 1));
     }
 
     public static PitModel GetNewInstance(FoodFightGame3D game)
