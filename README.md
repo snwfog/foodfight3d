@@ -1,5 +1,11 @@
-Chao Yang
-5682061
+# Space Food Fight
+![img](ss/ss1.png)
+![img](ss/ss2.png)
+![img](ss/ss3.png)
+![img](ss/ss4.png)
+![img](ss/ss5.png)
+![img](ss/ss6.png)
+![img](ss/ss7.png)
 
 Note: The project is too large, you can find it on Github at:
 https://github.com/snwfog/foodfight3d
